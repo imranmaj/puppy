@@ -8,18 +8,18 @@ QUEUES = QueueList(queues=[
     Queue(
         lcu_queue_name="Summoner's Rift",
         roles=RoleList(roles=[
-            Role(display_role_name="Top", lcu_role_name="TOP", ugg_data_name="world_platinum_plus_top"),
-            Role(display_role_name="Jungle", lcu_role_name="JUNGLE", ugg_data_name="world_platinum_plus_jungle"),
-            Role(display_role_name="Middle", lcu_role_name="MIDDLE", ugg_data_name="world_platinum_plus_mid"),
-            Role(display_role_name="ADC", lcu_role_name="BOTTOM", ugg_data_name="world_platinum_plus_adc"),
-            Role(display_role_name="Support", lcu_role_name="UTILITY", ugg_data_name="world_platinum_plus_supp")
+            Role(display_role_name="Top", display_short_role_name="Top", lcu_role_name="TOP", ugg_data_name="world_platinum_plus_top"),
+            Role(display_role_name="Jungle", display_short_role_name="JG", lcu_role_name="JUNGLE", ugg_data_name="world_platinum_plus_jungle"),
+            Role(display_role_name="Middle", display_short_role_name="Mid", lcu_role_name="MIDDLE", ugg_data_name="world_platinum_plus_mid"),
+            Role(display_role_name="ADC", display_short_role_name="ADC", lcu_role_name="BOTTOM", ugg_data_name="world_platinum_plus_adc"),
+            Role(display_role_name="Support", display_short_role_name="Sup", lcu_role_name="UTILITY", ugg_data_name="world_platinum_plus_supp")
         ]),
         ugg_url="https://u.gg/lol/champions/{champion_name}/build"
     ),
     Queue(
         lcu_queue_name="Howling Abyss",
         roles=RoleList(roles=[
-            Role(display_role_name="ARAM", lcu_role_name="", ugg_data_name="world_overall_none")
+            Role(display_role_name="ARAM", display_short_role_name="ARAM", lcu_role_name="", ugg_data_name="world_overall_none")
         ]),
         ugg_url="https://u.gg/lol/champions/{champion_name}/build?queueType=normal_aram"
     )

@@ -145,7 +145,7 @@ class UGG:
 
         starting = ItemBlock(
             items=self.data[role]["rec_starting_items"]["items"] + SMALL_ITEMS, 
-            block_name=f"Starting/Small Items. Start {first_abilities}"
+            block_name=f"Starting/Small Items"
         )
         core = ItemBlock(items=self.data[role]["rec_core_items"]["items"], block_name="Core Items")
         item_4_options = ItemBlock(items=[item["item_id"] for item in self.data[role]["item_options_1"]], block_name="Item 4 Options")

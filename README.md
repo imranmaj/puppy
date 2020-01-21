@@ -25,7 +25,7 @@ Runes, summoner spells, items, and ability order helper
 * Go through champ select and lock in a champion
 * Select the rune page whose name is your role (e.g., if you are playing mid, select the rune page called "Middle"). Your summoner spells, item sets, and ability upgrade order data will update automatically when you select a rune page.
 
-Your summoner spells and items should be updated automatically whenever you choose a new role using rune pages. Your ability max order can be found in the item set title and the upgrade order for the first few abilities can be found in the description of the starter items (both located in the in-game shop).
+Your summoner spells and items should be updated automatically whenever you choose a new role using rune pages. Your ability upgrade orders can be found in the item set title in the in-game shop.
 
 ## Config File
 

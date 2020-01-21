@@ -117,15 +117,15 @@ def main():
                 all_item_sets = new_all_item_sets
 
                 # first abilities order
-                first_abilities_string = ", ".join(ugg.get_first_abilities(current_rune_page_role).to_str_list())
+                first_abilities_string = "".join(ugg.get_first_abilities(current_rune_page_role).to_str_list())
                 # ability max order
-                ability_max_order_string = ", ".join(ugg.get_max_order(current_rune_page_role).to_str_list())
+                ability_max_order_string = "".join(ugg.get_max_order(current_rune_page_role).to_str_list())
 
                 # build new item set
                 new_item_set = ugg.get_items(
                     role=current_rune_page_role, 
                     champion_id=champion_id, 
-                    item_set_name=f"{current_rune_page_role.display_role_name} (Max {ability_max_order_string})", 
+                    item_set_name=f"{current_rune_page_role.display_short_role_name} (Start {first_abilities_string}, Max {ability_max_order_string})", 
                     first_abilities=first_abilities_string
                 )
                 # put item set

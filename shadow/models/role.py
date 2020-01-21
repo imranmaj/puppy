@@ -6,13 +6,14 @@ class Role:
     Represents a role (on a team)
     """
 
-    def __init__(self, display_role_name: str, lcu_role_name: str, ugg_data_name: str):
+    def __init__(self, display_role_name: str, display_short_role_name: str, lcu_role_name: str, ugg_data_name: str):
         """
         display_role_name - display name for role
         lcu_role_name - lcu name for role
         """
 
         self.display_role_name = display_role_name
+        self.display_short_role_name = display_short_role_name
         self.lcu_role_name = lcu_role_name
         self.ugg_data_name = ugg_data_name
 
