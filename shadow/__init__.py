@@ -110,7 +110,7 @@ def main():
                 new_all_item_sets = []
                 for item_set in all_item_sets:
                     for role in ALL_ROLES:
-                        if role.display_role_name in item_set["title"]:
+                        if all([word in item_set["title"] for word in (role.display_short_role_name, "Start", "Max")]):
                             break
                     else: # only keep ones that do not have the name of a role in their title
                         new_all_item_sets.append(item_set)
