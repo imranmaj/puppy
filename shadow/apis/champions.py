@@ -4,7 +4,7 @@ from typing import Optional
 
 import requests
 
-from shadow.apis.patches import Patches
+from .patches import Patches
 
 
 class Champions:

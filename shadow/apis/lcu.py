@@ -5,8 +5,8 @@ import requests
 from requests.models import Response
 from requests.exceptions import ConnectionError
 
-from shadow.apis.auth import Auth
-from shadow.exceptions import LeagueProcessNotFoundError
+from .auth import Auth
+from .exceptions import LeagueProcessNotFoundError
 
 
 class Lcu:

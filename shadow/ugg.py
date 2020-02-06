@@ -34,7 +34,7 @@ class UGG:
                 print(f"Using current patch's data ({max(current_patch_match_counts.values())}/{max(previous_patch_match_counts.values())})")
                 self.data = current_patch_data
             else:
-                print("Reverting to previous patch data")
+                print(f"Reverting to previous patch data ({max(current_patch_match_counts.values())}/{max(previous_patch_match_counts.values())})")
                 self.data = previous_patch_data
         else:
             # no reversion, use current patch

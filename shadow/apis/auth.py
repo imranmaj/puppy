@@ -4,7 +4,7 @@ from typing import Dict
 
 import psutil
 
-from shadow.exceptions import UnsupportedPlatformError, LeagueProcessNotFoundError
+from .exceptions import UnsupportedPlatformError, LeagueProcessNotFoundError
 
 
 class Auth:

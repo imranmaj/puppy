@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 import requests
 
-from shadow.apis.patches import Patches
+from .patches import Patches
 
 
 class Runes:
