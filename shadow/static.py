@@ -61,7 +61,8 @@ class GAMEFLOW_PHASE(Enum):
     CHAMP_SELECT = "ChampSelect"
     IN_PROGRESS = "InProgress"
     RECONNECT = "Reconnect"
-    PREENDOFGAME = "PreEndOfGame"
+    PRE_END_OF_GAME = "PreEndOfGame"
+    WAITING_FOR_STATS = "WaitingForStats"
 
 UAS = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36" # user agent string
 SLEEP_TIME = 0.5 # time to sleep between polls
