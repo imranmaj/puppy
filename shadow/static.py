@@ -8,11 +8,11 @@ QUEUES = QueueList(queues=[
     Queue(
         lcu_queue_name="Summoner's Rift",
         roles=RoleList(roles=[
-            Role(display_role_name="Top", display_short_role_name="Top", lcu_role_name="TOP", ugg_data_name="world_platinum_plus_top"),
-            Role(display_role_name="Jungle", display_short_role_name="JG", lcu_role_name="JUNGLE", ugg_data_name="world_platinum_plus_jungle"),
-            Role(display_role_name="Middle", display_short_role_name="Mid", lcu_role_name="MIDDLE", ugg_data_name="world_platinum_plus_mid"),
-            Role(display_role_name="ADC", display_short_role_name="ADC", lcu_role_name="BOTTOM", ugg_data_name="world_platinum_plus_adc"),
-            Role(display_role_name="Support", display_short_role_name="Sup", lcu_role_name="UTILITY", ugg_data_name="world_platinum_plus_supp")
+            Role(display_role_name="Top", display_short_role_name="Top", lcu_role_name="top", ugg_data_name="world_platinum_plus_top"),
+            Role(display_role_name="Jungle", display_short_role_name="JG", lcu_role_name="jungle", ugg_data_name="world_platinum_plus_jungle"),
+            Role(display_role_name="Middle", display_short_role_name="Mid", lcu_role_name="middle", ugg_data_name="world_platinum_plus_mid"),
+            Role(display_role_name="ADC", display_short_role_name="ADC", lcu_role_name="bottom", ugg_data_name="world_platinum_plus_adc"),
+            Role(display_role_name="Support", display_short_role_name="Sup", lcu_role_name="utility", ugg_data_name="world_platinum_plus_supp")
         ]),
         ugg_url="https://u.gg/lol/champions/{champion_name}/build"
     ),
@@ -61,6 +61,7 @@ class GAMEFLOW_PHASE(Enum):
     CHAMP_SELECT = "ChampSelect"
     IN_PROGRESS = "InProgress"
     RECONNECT = "Reconnect"
+    PREENDOFGAME = "PreEndOfGame"
 
 UAS = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36" # user agent string
 SLEEP_TIME = 0.5 # time to sleep between polls
