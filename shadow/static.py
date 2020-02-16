@@ -62,6 +62,7 @@ class GAMEFLOW_PHASE(Enum):
     IN_PROGRESS = "InProgress"
     RECONNECT = "Reconnect"
     PRE_END_OF_GAME = "PreEndOfGame"
+    END_OF_GAME = "EndOfGame"
     WAITING_FOR_STATS = "WaitingForStats"
 
 UAS = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36" # user agent string
