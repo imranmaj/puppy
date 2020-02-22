@@ -8,7 +8,7 @@ import requests
 from shadow.environment import config
 from shadow.apis import Patches, Runes
 from shadow.models import Queue, Role, RoleList, ItemBlock, ItemSet, RuneList, AbilityList
-from shadow.static import ALL_ROLES, QUEUES, UAS, SMALL_ITEMS, ABILITIES, BASIC_ABILITIES, MIN_ACCEPTABLE_NORMED_MATCH_COUNT, MIN_ACCEPTABLE_PATCH_MATCH_RATIO, FLASH
+from shadow.static import UAS, SMALL_ITEMS, ABILITIES, BASIC_ABILITIES, MIN_ACCEPTABLE_NORMED_MATCH_COUNT, MIN_ACCEPTABLE_PATCH_MATCH_RATIO, FLASH
 
 
 class UGG:
@@ -25,6 +25,10 @@ class UGG:
         current_patch_data = self.get_and_parse_data(self.current_queue, url)
         if config.revert_patch:
             previous_patch_data = self.get_and_parse_data(self.current_queue, url, underscored_patch=Patches.get_format_underscore_previous_patch())
+            if previous_patch_data is None:
+                print("No data from previous patch")
+                self.data = current_patch_data
+                return
 
             current_patch_match_counts = self.get_match_counts(current_queue=self.current_queue, data=current_patch_data)
             previous_patch_match_counts = self.get_match_counts(current_queue=self.current_queue, data=previous_patch_data)
@@ -42,7 +46,7 @@ class UGG:
 
     @staticmethod
     @lru_cache()
-    def get_and_parse_data(current_queue, url, underscored_patch: str=None) -> Dict[Role, Dict]:
+    def get_and_parse_data(current_queue, url, underscored_patch: str=None) -> Optional[Dict[Role, Dict]]:
         if underscored_patch:
             r = requests.get(
                 url,
@@ -62,6 +66,10 @@ class UGG:
             )
         data_text = re.search(r"(?<=(window.__PRELOADED_STATE__ = )).*}", r.text).group(0)
         all_data = json.loads(data_text)["championProfile"]["championOverview"][1]
+
+        if all_data is None:
+            # no data
+            return
 
         # parse data by role
         data = dict()

@@ -1,7 +1,7 @@
 from shadow.config import Config
 from shadow.static import CONFIG_FILENAME
 
-__version__ = "1.3.3"
+__version__ = "1.3.4"
 
 config = Config()
 
