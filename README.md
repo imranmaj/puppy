@@ -23,7 +23,7 @@ Runes, summoner spells, items, and ability order helper
 * Open League of Legends
 * Run `python3 -m shadow` from the command line, or run `shadow.bat`
 * Go through champ select and lock in a champion
-* Select the rune page whose name is your role (e.g., if you are playing mid, select the rune page called "Middle"). Your summoner spells, item sets, and ability upgrade order data will update automatically when you select a rune page.
+* Select the rune page whose name is your role (e.g., if you are playing mid, select the rune page called "Middle")
 
 Your summoner spells and items should be updated automatically whenever you choose a new role using rune pages. Your ability upgrade orders can be found in the item set title in the in-game shop.
 
