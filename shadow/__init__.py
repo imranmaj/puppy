@@ -125,7 +125,7 @@ def main():
                 new_item_set = ugg.get_items(
                     role=current_rune_page_role, 
                     champion_id=champion_id, 
-                    item_set_name=f"{current_rune_page_role.display_short_role_name} (Start {first_abilities_string}, Max {ability_max_order_string})", 
+                    item_set_name=f"{current_rune_page_role.display_short_role_name}: Start {first_abilities_string}/Max {ability_max_order_string}", 
                     first_abilities=first_abilities_string
                 )
                 # put item set
