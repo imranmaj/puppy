@@ -64,18 +64,22 @@ class UGG:
                     "User-Agent": UAS
                 }
             )
-        data_text = re.search(r"(?<=(window.__PRELOADED_STATE__ = )).*}", r.text).group(0)
-        all_data = json.loads(data_text)["championProfile"]["championOverview"][1]
 
-        if all_data is None:
+        data_text = re.search(r"(?<=(window.__REACTN_PRELOADED_STATE__ = )).*}", r.text).group(0)
+        all_data = json.loads(data_text)
+        for key, val in all_data.items():
+            if "overview" in key:
+                found_data = val["fetchedJSON"]
+                break
+        else:
             # no data
             return
 
         # parse data by role
         data = dict()
         for role in current_queue.roles:
-            if role.ugg_data_name in all_data:
-                data[role] = all_data[role.ugg_data_name]
+            if role.ugg_data_name in found_data:
+                data[role] = found_data[role.ugg_data_name]
 
         return data
 
