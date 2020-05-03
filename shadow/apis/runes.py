@@ -137,3 +137,20 @@ class Runes:
                 for i, rune in enumerate(slot["runes"]):
                     if rune["id"] == rune_id:
                         return i + 1
+
+    @classmethod
+    @lru_cache()
+    def row_for_id(cls, rune_id: int) -> Optional[int]:
+        """
+        Finds the row for a rune in the tree given its id
+        Returns the row, None if not found
+        Row is indexed starting at 0
+
+        rune_id - id of rune
+        """
+
+        for tree in cls.runes:
+            for i, slot in enumerate(tree["slots"]):
+                for rune in slot["runes"]:
+                    if rune["id"] == rune_id:
+                        return i
