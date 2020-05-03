@@ -55,6 +55,20 @@ class Runes:
 
     @classmethod
     @lru_cache()
+    def style_name_for_style_id(cls, style_id: int) -> Optional[str]:
+        """
+        Returns the name of the rune tree style given its id
+        Returns None if it does not exist
+
+        style_id - id of the rune tree style
+        """
+
+        for tree in cls.runes:
+            if tree["id"] == style_id:
+                return tree["name"]
+
+    @classmethod
+    @lru_cache()
     def sort_runes(cls, runes: List[int], primary_style: int, secondary_style: int) -> List[int]:
         """
         Sorts list of runes into the correct order
