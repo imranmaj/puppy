@@ -74,3 +74,52 @@ class Runes:
         sorted_secondary_runes = sorted(secondary_runes, key=lambda i: all_rune_trees[secondary_style].index(i))
 
         return sorted_primary_runes + sorted_secondary_runes
+
+    @classmethod
+    @lru_cache()
+    def id_for_name(cls, name: str) -> Optional[int]:
+        """
+        Finds the id for a rune given its name
+        Returns the id, None if not found
+
+        name - name of rune
+        """
+
+        for tree in cls.runes:
+            for slot in tree["slots"]:
+                for rune in slot["runes"]:
+                    if rune["key"].casefold() == name.casefold():
+                        return rune["id"]
+
+    @classmethod
+    @lru_cache()
+    def name_for_id(cls, rune_id: int) -> Optional[str]:
+        """
+        Finds the name for a rune given its id
+        Returns the name, None if not found
+
+        rune_id - id of rune
+        """
+
+        for tree in cls.runes:
+            for slot in tree["slots"]:
+                for rune in slot["runes"]:
+                    if rune["id"] == rune_id:
+                        return rune["key"]
+
+    @classmethod
+    @lru_cache()
+    def row_position_for_id(cls, rune_id: int) -> Optional[int]:
+        """
+        Finds the row position for a rune given its id
+        Returns the row position, None if not found
+        Row position is indexed starting at 1
+
+        rune_id - id of rune
+        """
+
+        for tree in cls.runes:
+            for slot in tree["slots"]:
+                for i, rune in enumerate(slot["runes"]):
+                    if rune["id"] == rune_id:
+                        return i + 1
