@@ -29,6 +29,26 @@ class RoleList:
 
         self.roles = roles
 
+    def get_role_by_display_role_name(self, display_role_name: str) -> Optional[Role]:
+        """
+        Returns a role given its display name
+        Returns None if there is no role for the display name
+        """
+
+        for role in self:
+            if role.display_role_name == display_role_name:
+                return role
+
+    def get_role_by_display_short_role_name(self, display_short_role_name: str) -> Optional[Role]:
+        """
+        Returns a role given its short display name
+        Returns None if there is no role for the short display name
+        """
+
+        for role in self:
+            if role.display_short_role_name == display_short_role_name:
+                return role
+
     def get_role_by_lcu_role_name(self, lcu_role_name: str) -> Optional[Role]:
         """
         Returns a role given its lcu name
@@ -39,14 +59,20 @@ class RoleList:
             if role.lcu_role_name == lcu_role_name:
                 return role
 
-    def get_role_by_display_role_name(self, display_role_name: str) -> Optional[Role]:
+    def find_role(self, role_string: str) -> Optional[Role]:
         """
-        Returns a role given its display name
-        Returns None if there is no role for the display name
+        Attempts to find a role based on a string representation of it
+            (case insensitive)
         """
 
         for role in self:
-            if role.display_role_name == display_role_name:
+            if role.display_role_name.casefold() == role_string.casefold():
+                return role
+        for role in self:
+            if role.display_short_role_name.casefold() == role_string.casefold():
+                return role
+        for role in self:
+            if role.lcu_role_name.casefold() == role_string.casefold():
                 return role
     
     def __iter__(self):

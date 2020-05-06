@@ -40,3 +40,40 @@ class Summoner:
         for summoner in cls.summoners["data"].values():
             if summoner["key"] == summoner_id:
                 return summoner["name"]
+
+    @classmethod
+    @lru_cache()
+    def alternate_name_for_id(cls, summoner_id: str) -> Optional[str]:
+        """
+        Finds the alternate name for a summoner spell given its id
+        Returns the alternate name, None if not found
+
+        summoner_id - id of summoner spell
+        """
+
+        for summoner in cls.summoners["data"].values():
+            if summoner["key"] == summoner_id:
+                return summoner["id"]
+
+    @classmethod
+    @lru_cache()
+    def id_for_alternate_name(cls, alternate_name: str) -> Optional[str]:
+        """
+        Finds the id for a summoner spell given its alternate name
+        Returns the id, None if not found
+
+        alternate_name - alternate_name of summoner spell
+        """
+
+        for summoner in cls.summoners["data"].values():
+            if summoner["id"] == alternate_name:
+                return summoner["key"]
+
+    @classmethod
+    @lru_cache()
+    def asset_url(cls, alternate_name: str) -> str:
+        """
+        Returns the url for the asset of the summoner given its alternate name
+        """
+
+        return f"http://ddragon.leagueoflegends.com/cdn/{Patches.get_current_patch()}/img/spell/{alternate_name}.png"
