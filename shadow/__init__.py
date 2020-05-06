@@ -80,7 +80,7 @@ def main():
                 rune_pages_to_add = []
                 for role in ugg.get_roles():
                     active = role == assigned_role # make the page for assigned role active
-                    new_rune_page = ugg.get_runes(role, active=active)
+                    new_rune_page = ugg.get_runes(role, active=active).build()
                     rune_pages_to_add.append(new_rune_page)
 
                 assigned_role_rune_page_id = None
@@ -123,11 +123,9 @@ def main():
 
                 # build new item set
                 new_item_set = ugg.get_items(
-                    role=current_rune_page_role, 
-                    champion_id=champion_id, 
-                    item_set_name=f"{current_rune_page_role.display_short_role_name}: Start {first_abilities_string}/Max {ability_max_order_string}", 
-                    first_abilities=first_abilities_string
-                )
+                    role=current_rune_page_role,
+                    item_set_name=f"{current_rune_page_role.display_short_role_name}: Start {first_abilities_string}/Max {ability_max_order_string}"
+                ).build()
                 # put item set
                 all_item_sets.append(new_item_set)
                 item_sets_data["itemSets"] = all_item_sets

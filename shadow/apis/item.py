@@ -38,6 +38,6 @@ class Item:
         item_id - id of item
         """
 
-        for item_id, item in cls.items["data"].items():
-            if item_id == item_id:
+        for found_item_id, item in cls.items["data"].items():
+            if found_item_id == item_id:
                 return item["name"]

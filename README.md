@@ -61,3 +61,24 @@ For example,
 ```
 
 will place control wards into the first item slot (bound to the 1 key by default).
+
+#### small_items
+
+`"small_items": [int] `
+
+List of any additional items you want to be listed as part of your small/starting items.
+
+For example,
+
+```
+{
+    ...
+    "small_items": [
+        3340, 
+        1001, 
+        2055
+    ]
+}
+```
+
+will include the yellow trinket, boots, and control wards at the end of your small items block in the item set.

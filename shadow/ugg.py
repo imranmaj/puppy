@@ -6,9 +6,9 @@ from functools import lru_cache
 import requests
 
 from shadow.environment import config
-from shadow.apis import Patches, Runes
+from shadow.apis import Patches, Runes, Champions
 from shadow.models import Queue, Role, RoleList, ItemBlock, ItemSet, RuneList, AbilityList
-from shadow.static import UAS, SMALL_ITEMS, ABILITIES, BASIC_ABILITIES, MIN_ACCEPTABLE_NORMED_MATCH_COUNT, MIN_ACCEPTABLE_PATCH_MATCH_RATIO, FLASH
+from shadow.static import UAS, ABILITIES, BASIC_ABILITIES, MIN_ACCEPTABLE_NORMED_MATCH_COUNT, MIN_ACCEPTABLE_PATCH_MATCH_RATIO, FLASH
 
 
 class UGG:
@@ -18,6 +18,7 @@ class UGG:
         current_queue - Queue to get data for
         """
 
+        self.champion_name = champion_name
         self.current_queue = current_queue
         self.assigned_role = assigned_role
 
@@ -120,7 +121,7 @@ class UGG:
         return RoleList(roles=champion_roles)
 
     @lru_cache()
-    def get_runes(self, role: Role, active: bool) -> Dict:
+    def get_runes(self, role: Role, active: bool) -> RuneList:
         """
         Returns built rune page for current champion
 
@@ -142,21 +143,19 @@ class UGG:
             secondary_style=secondary_style,
             runes=sorted_runes + shards,
             active=active
-        ).build()
+        )
     
     @lru_cache()
-    def get_items(self, role: Role, champion_id: int, item_set_name: str, first_abilities: str) -> Dict:
+    def get_items(self, role: Role, item_set_name: str) -> ItemSet:
         """
         Returns built item set for current champion
 
         role - role of current champion
-        champion_id - id of current champion
         item_set_name - name of item set
-        first_abilities - first abilities upgrade order
         """
 
         starting = ItemBlock(
-            items=self.data[role]["rec_starting_items"]["items"] + SMALL_ITEMS, 
+            items=self.data[role]["rec_starting_items"]["items"] + config.small_items, 
             block_name=f"Starting/Small Items"
         )
         core = ItemBlock(items=self.data[role]["rec_core_items"]["items"], block_name="Core Items")
@@ -164,13 +163,14 @@ class UGG:
         item_5_options = ItemBlock(items=[item["item_id"] for item in self.data[role]["item_options_2"]], block_name="Item 5 Options")
         item_6_options = ItemBlock(items=[item["item_id"] for item in self.data[role]["item_options_3"]], block_name="Item 6 Options")
 
+        champion_id = int(Champions.id_for_name(self.champion_name))
         return ItemSet(item_blocks=[
             starting,
             core,
             item_4_options,
             item_5_options,
             item_6_options
-        ], item_set_name=item_set_name, champion_id=champion_id, preferred_item_slots=config.preferred_item_slots).build()
+        ], item_set_name=item_set_name, champion_id=champion_id, preferred_item_slots=config.preferred_item_slots)
 
     @lru_cache()
     def get_summoners(self, role: Role) -> Tuple[int, int]:
