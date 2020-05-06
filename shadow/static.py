@@ -67,7 +67,6 @@ class GAMEFLOW_PHASE(Enum):
 
 UAS = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36" # user agent string
 SLEEP_TIME = 0.5 # time to sleep between polls
-FIRST_ABILITIES_COUNT = 6 # number of abilities to include in upgrade order
 MIN_ACCEPTABLE_NORMED_MATCH_COUNT = 0.1 # minimum normalized value for match count to be considered for a rune page
 MIN_ACCEPTABLE_PATCH_MATCH_RATIO = 0.15 # ratio of games on current patch to previous patch required to use current patch's data
 FLASH = 4 # id for flash summoner
@@ -75,5 +74,6 @@ CONFIG_FILENAME = "config.json" # name of config file
 DEFAULT_CONFIG = { # default config file contents
     "flash_on_f": True,
     "revert_patch": True,
-    "preferred_item_slots": dict()
+    "preferred_item_slots": dict(),
+    "small_items": list()
 }
