@@ -63,7 +63,7 @@ def main():
                 print("Locked in", champion_name)
                 # get champ data
                 print("Fetching data...")
-                ugg = UGG(champion_name=champion_name, current_queue=current_queue, assigned_role=assigned_role)
+                ugg = UGG(alternate_champion_name=Champions.alternate_name_for_id(Champions.id_for_name(champion_name)), current_queue=current_queue, assigned_role=assigned_role)
                 print("Retrieved data for", ", ".join([role.display_role_name for role in ugg.get_roles()]))
 
                 print("Building rune pages...")

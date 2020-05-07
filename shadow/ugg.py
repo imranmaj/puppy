@@ -12,17 +12,17 @@ from shadow.static import UAS, ABILITIES, BASIC_ABILITIES, MIN_ACCEPTABLE_NORMED
 
 
 class UGG:
-    def __init__(self, champion_name: str, current_queue: Queue, assigned_role: Optional[Role]):
+    def __init__(self, alternate_champion_name: str, current_queue: Queue, assigned_role: Optional[Role]):
         """
-        champion_name - full name of champion to get data for
+        alternate_champion_name - full name of champion to get data for
         current_queue - Queue to get data for
         """
 
-        self.champion_name = champion_name
+        self.alternate_champion_name = alternate_champion_name
         self.current_queue = current_queue
         self.assigned_role = assigned_role
 
-        url = current_queue.ugg_url.format(champion_name=champion_name)
+        url = current_queue.ugg_url.format(champion_name=alternate_champion_name)
         current_patch_data = self.get_and_parse_data(self.current_queue, url)
         if config.revert_patch:
             previous_patch_data = self.get_and_parse_data(self.current_queue, url, underscored_patch=Patches.get_format_underscore_previous_patch())
@@ -163,7 +163,7 @@ class UGG:
         item_5_options = ItemBlock(items=[item["item_id"] for item in self.data[role]["item_options_2"]], block_name="Item 5 Options")
         item_6_options = ItemBlock(items=[item["item_id"] for item in self.data[role]["item_options_3"]], block_name="Item 6 Options")
 
-        champion_id = int(Champions.id_for_name(self.champion_name))
+        champion_id = int(Champions.id_for_name(self.alternate_champion_name))
         return ItemSet(item_blocks=[
             starting,
             core,
