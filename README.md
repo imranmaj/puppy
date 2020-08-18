@@ -8,7 +8,7 @@ Runes, summoner spells, items, and ability order helper
 * Supports changing champion (e.g., trades, ARAM bench)
 * Supports different roles (for when there are different runes, summoner spells, items, or ability orders depending on the role your champion is played in)
 * Detects your assigned role and switches your runes and items to match that role by default
-* Support Summoner's Rift and ARAM
+* Supports Summoner's Rift, ARAM, and Nexus Blitz
 * Uses caching for optimal performance
 * Detects whether to use previous patch's data if there is not enough data on this patch to give accurate information
 

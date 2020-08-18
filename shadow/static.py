@@ -23,6 +23,13 @@ QUEUES = QueueList(queues=[
             Role(display_role_name="ARAM", display_short_role_name="ARAM", lcu_role_name="", ugg_data_name="world_overall_none")
         ]),
         ugg_url="https://u.gg/lol/champions/builds/mid-{champion_name}-build?queueType=normal_aram"
+    ),
+    Queue(
+        lcu_queue_name="Nexus Blitz",
+        roles=RoleList(roles=[
+            Role(display_role_name="Nexus Blitz", display_short_role_name="NB", lcu_role_name="", ugg_data_name="world_overall_none")
+        ]),
+        ugg_url="https://u.gg/lol/champions/builds/mid-{champion_name}-build?queueType=nexus_blitz"
     )
 ])
 
