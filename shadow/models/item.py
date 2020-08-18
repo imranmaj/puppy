@@ -63,7 +63,7 @@ class ItemSet:
         
         return {
             "associatedChampions": [self.champion_id],
-            "associatedMaps": [10, 11, 12],
+            "associatedMaps": [], # all maps
             "blocks": parsed_blocks,
             "map": "any",
             "mode": "any",
