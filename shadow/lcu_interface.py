@@ -27,7 +27,10 @@ class LcuInterface:
         Returns the current queue (from QUEUES QueueList)
         """
 
-        return QUEUES.get_queue_by_lcu_queue_name(self.lcu.get(["lol-gameflow", "v1", "session"]).json()["map"]["name"])
+        queue = QUEUES.get_queue_by_lcu_queue_name(self.lcu.get(["lol-gameflow", "v1", "session"]).json()["map"]["name"])
+        if not queue:
+            queue = QUEUES.get_default()
+        return queue
 
     def wait_for_champ_select(self, sleep_time):
         """

@@ -42,5 +42,12 @@ class QueueList:
             if queue.lcu_queue_name == queue_lcu_queue_name:
                 return queue
 
+    def get_default(self) -> Queue:
+        """
+        Returns the default queue
+        """
+
+        return self.get_queue_by_lcu_queue_name("Summoner's Rift")
+
     def __iter__(self):
         return iter(self.queues)

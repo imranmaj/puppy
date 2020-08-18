@@ -1,3 +1,4 @@
+from shadow.models import ability
 from time import sleep
 
 from shadow.environment import __version__, print_info
@@ -98,7 +99,7 @@ def main():
             current_rune_page = lcu_interface.get_current_rune_page()
             if current_rune_page["name"] in [role.display_role_name for role in ALL_ROLES]:
                 current_rune_page_role = ALL_ROLES.get_role_by_display_role_name(current_rune_page["name"])
-            # check if champion changed or if we have the same rune page as last time
+            # check if champion changed or if we have a different rune page than last time we checked
             if champion_changed or current_rune_page_role != prev_rune_page_role:
                 print("Rune page changed to", current_rune_page_role.display_role_name)
                 print("Building item set...")
@@ -110,7 +111,7 @@ def main():
                 new_all_item_sets = []
                 for item_set in all_item_sets:
                     for role in ALL_ROLES:
-                        if all([word in item_set["title"] for word in (role.display_short_role_name, "Start", "Max")]):
+                        if item_set["title"].endswith(role.display_short_role_name):
                             break
                     else: # only keep ones that do not have the name of a role in their title
                         new_all_item_sets.append(item_set)
@@ -124,7 +125,9 @@ def main():
                 # build new item set
                 new_item_set = ugg.get_items(
                     role=current_rune_page_role,
-                    item_set_name=f"{current_rune_page_role.display_short_role_name}: Start {first_abilities_string}/Max {ability_max_order_string}"
+                    item_set_name=f"{champion_name} {current_rune_page_role.display_short_role_name}",
+                    first_abilities_string=first_abilities_string,
+                    ability_max_order_string=ability_max_order_string
                 ).build()
                 # put item set
                 all_item_sets.append(new_item_set)

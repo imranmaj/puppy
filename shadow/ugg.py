@@ -146,7 +146,7 @@ class UGG:
         )
     
     @lru_cache()
-    def get_items(self, role: Role, item_set_name: str) -> ItemSet:
+    def get_items(self, role: Role, item_set_name: str, first_abilities_string: str, ability_max_order_string: str) -> ItemSet:
         """
         Returns built item set for current champion
 
@@ -156,9 +156,9 @@ class UGG:
 
         starting = ItemBlock(
             items=self.data[role]["rec_starting_items"]["items"] + config.small_items, 
-            block_name=f"Starting/Small Items"
+            block_name=f"Starting/Small Items, Start: {first_abilities_string}"
         )
-        core = ItemBlock(items=self.data[role]["rec_core_items"]["items"], block_name="Core Items")
+        core = ItemBlock(items=self.data[role]["rec_core_items"]["items"], block_name=f"Core Items,             Max:  {ability_max_order_string}")
         item_4_options = ItemBlock(items=[item["item_id"] for item in self.data[role]["item_options_1"]], block_name="Item 4 Options")
         item_5_options = ItemBlock(items=[item["item_id"] for item in self.data[role]["item_options_2"]], block_name="Item 5 Options")
         item_6_options = ItemBlock(items=[item["item_id"] for item in self.data[role]["item_options_3"]], block_name="Item 6 Options")
