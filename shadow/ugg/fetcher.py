@@ -56,7 +56,10 @@ class Fetcher:
         try:
             self.primary_roles = session.get(
                 self.UGG_PRIMARY_ROLES.format(underscored_patch=underscored_patch)
-            ).json()[champion_id]
+            ).json().get(champion_id)
+            # champion exists this patch that did not exist last patch
+            if self.primary_roles is None:
+                raise NoDataError
             self.overview = session.get(
                 self.UGG_OVERVIEW.format(
                     underscored_patch=underscored_patch,
@@ -83,7 +86,7 @@ class Fetcher:
         )
 
     def overview_data(self, region: str, rank: str, role: Role) -> Optional[Dict[str, Any]]:
-        data = self.overview[REGIONS[region]][RANKS[rank]].get(ROLES[str(role.ugg_role_name)], None)
+        data = self.overview[REGIONS[region]][RANKS[rank]].get(ROLES[str(role.ugg_role_name)])
         if data is None:
             return
         data = data[0]
@@ -142,7 +145,7 @@ class Fetcher:
 
     def rankings_data(self, region: str, rank: str, role: Role) -> Optional[Dict[str, Any]]:
         data = self.rankings[REGIONS[region]][RANKS[rank]].get(
-            ROLES[str(role.ugg_role_name)], None
+            ROLES[str(role.ugg_role_name)]
         )
         if data is None:
             return
