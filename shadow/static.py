@@ -3,33 +3,36 @@ from enum import Enum
 
 from shadow.models import Queue, QueueList, Role, RoleList, Shard, ShardList, Ability, AbilityList
 
+
 # queue types
 QUEUES = QueueList(queues=[
     Queue(
         lcu_queue_name="Summoner's Rift",
+        ugg_queue_name="ranked_solo_5x5",
+        rank="platinum_plus",
         roles=RoleList(roles=[
-            Role(display_role_name="Top", display_short_role_name="Top", lcu_role_name="top", ugg_data_name="world_platinum_plus_top"),
-            Role(display_role_name="Jungle", display_short_role_name="JG", lcu_role_name="jungle", ugg_data_name="world_platinum_plus_jungle"),
-            Role(display_role_name="Middle", display_short_role_name="Mid", lcu_role_name="middle", ugg_data_name="world_platinum_plus_mid"),
-            Role(display_role_name="ADC", display_short_role_name="ADC", lcu_role_name="bottom", ugg_data_name="world_platinum_plus_adc"),
-            Role(display_role_name="Support", display_short_role_name="Sup", lcu_role_name="utility", ugg_data_name="world_platinum_plus_supp")
-        ]),
-        # even though the url says "mid", the page contains data for all roles
-        ugg_url="https://u.gg/lol/champions/builds/mid-{champion_name}-build"
+            Role(display_role_name="Top", display_short_role_name="Top", lcu_role_name="top", ugg_role_name="top"),
+            Role(display_role_name="Jungle", display_short_role_name="JG", lcu_role_name="jungle", ugg_role_name="jungle"),
+            Role(display_role_name="Middle", display_short_role_name="Mid", lcu_role_name="middle", ugg_role_name="mid"),
+            Role(display_role_name="ADC", display_short_role_name="ADC", lcu_role_name="bottom", ugg_role_name="adc"),
+            Role(display_role_name="Support", display_short_role_name="Sup", lcu_role_name="utility", ugg_role_name="supp")
+        ])
     ),
     Queue(
         lcu_queue_name="Howling Abyss",
+        ugg_queue_name="normal_aram",
+        rank="overall",
         roles=RoleList(roles=[
-            Role(display_role_name="ARAM", display_short_role_name="ARAM", lcu_role_name="", ugg_data_name="world_overall_none")
-        ]),
-        ugg_url="https://u.gg/lol/champions/builds/mid-{champion_name}-build?queueType=normal_aram"
+            Role(display_role_name="ARAM", display_short_role_name="ARAM", lcu_role_name="", ugg_role_name="none")
+        ])
     ),
     Queue(
         lcu_queue_name="Nexus Blitz",
+        ugg_queue_name="nexus_blitz",
+        rank="overall",
         roles=RoleList(roles=[
-            Role(display_role_name="Nexus Blitz", display_short_role_name="NB", lcu_role_name="", ugg_data_name="world_overall_none")
-        ]),
-        ugg_url="https://u.gg/lol/champions/builds/mid-{champion_name}-build?queueType=nexus_blitz"
+            Role(display_role_name="Nexus Blitz", display_short_role_name="NB", lcu_role_name="", ugg_role_name="none")
+        ])
     )
 ])
 
@@ -75,7 +78,6 @@ class GAMEFLOW_PHASE(Enum):
 
 UAS = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.142 Safari/537.36" # user agent string
 SLEEP_TIME = 0.5 # time to sleep between polls
-MIN_ACCEPTABLE_NORMED_MATCH_COUNT = 0.1 # minimum normalized value for match count to be considered for a rune page
 MIN_ACCEPTABLE_PATCH_MATCH_RATIO = 0.15 # ratio of games on current patch to previous patch required to use current patch's data
 FLASH = 4 # id for flash summoner
 CONFIG_FILENAME = "config.json" # name of config file

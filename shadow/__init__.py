@@ -1,4 +1,3 @@
-from shadow.models import ability
 from time import sleep
 
 from shadow.environment import __version__, print_info
@@ -64,8 +63,8 @@ def main():
                 print("Locked in", champion_name)
                 # get champ data
                 print("Fetching data...")
-                ugg = UGG(alternate_champion_name=Champions.alternate_name_for_id(Champions.id_for_name(champion_name)), current_queue=current_queue, assigned_role=assigned_role)
-                print("Retrieved data for", ", ".join([role.display_role_name for role in ugg.get_roles()]))
+                ugg = UGG(champion_id=Champions.id_for_name(champion_name), current_queue=current_queue, assigned_role=assigned_role)
+                print("Retrieved data")
 
                 print("Building rune pages...")
                 # delete old pages
@@ -79,11 +78,16 @@ def main():
 
                 # build rune pages for correct map and post them
                 rune_pages_to_add = []
-                for role in ugg.get_roles():
-                    active = role == assigned_role # make the page for assigned role active
+                for i, role in enumerate(ugg.get_roles()):
+                    # make the page for assigned role active
+                    active = role == assigned_role
+                    # most popular role is active if there is no assigned role
+                    if assigned_role is None and i == 0:
+                        active = True
                     new_rune_page = ugg.get_runes(role, active=active).build()
                     rune_pages_to_add.append(new_rune_page)
 
+                # search through rune pages for the one marked as active
                 assigned_role_rune_page_id = None
                 for rune_page in rune_pages_to_add:
                     lcu_interface.post_rune_page(rune_page)

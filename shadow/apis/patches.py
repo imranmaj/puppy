@@ -25,6 +25,16 @@ class Patches:
         return cls.get_all_patches()[0]
 
     @classmethod
+    def get_format_underscore_current_patch(cls) -> str:
+        """
+        Returns the current patch with underscores instead of periods
+        Uses only the first 2 parts of the patch name
+        """
+
+        current_patch = cls.get_current_patch()
+        return "_".join(current_patch.split(".")[:2])
+
+    @classmethod
     def get_format_underscore_previous_patch(cls) -> str:
         """
         Returns the previous patch with underscores instead of periods

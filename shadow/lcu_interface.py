@@ -2,7 +2,7 @@ from time import sleep
 from typing import Dict, Tuple, Optional, Any
 
 from shadow.apis import Lcu
-from shadow.static import QUEUES, GAMEFLOW_PHASE, ALL_ROLES
+from shadow.static import QUEUES, GAMEFLOW_PHASE
 from shadow.models import Queue, Role
 
 

@@ -38,7 +38,7 @@ class RuneList:
             "isValid": True,
             "lastModified": 0,
             "order": 0,
-            # edit
+            # edit the ones below
             "name": self.rune_page_name,
             "current": self.active,
             "isActive": self.active,
