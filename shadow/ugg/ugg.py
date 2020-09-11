@@ -33,9 +33,11 @@ class UGG:
             current_patch_matches = 0
             previous_patch_matches = 0
             for role in ALL_ROLES:
-                if (data := current_patch_data.rankings_data("world", self.current_queue.rank, role)) is not None:
+                data = current_patch_data.rankings_data("world", self.current_queue.rank, role)
+                if data is not None:
                     current_patch_matches += data["matches"]
-                if (data := previous_patch_data.rankings_data("world", self.current_queue.rank, role)) is not None:
+                data = previous_patch_data.rankings_data("world", self.current_queue.rank, role)
+                if data is not None:
                     previous_patch_matches += data["matches"]
 
             # use current patch only if max match count of any role in current patch is at least n% of
