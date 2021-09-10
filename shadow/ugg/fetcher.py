@@ -1,3 +1,4 @@
+import json
 from typing import Dict, Any, Optional
 from json import JSONDecodeError
 
@@ -43,20 +44,31 @@ REVERSED_ROLES = {v: k for k, v in ROLES.items()}
 
 
 class Fetcher:
-    UGG_PRIMARY_ROLES = (
-        "https://stats2.u.gg/lol/1.1/primary_roles/{underscored_patch}/1.5.0.json"
-    )
-    UGG_OVERVIEW = "https://stats2.u.gg/lol/1.1/overview/{underscored_patch}/{ugg_queue_name}/{champion_id}/1.5.0.json"
-    UGG_RANKINGS = "https://stats2.u.gg/lol/1.1/rankings/{underscored_patch}/{ugg_queue_name}/{champion_id}/1.5.0.json"
+    UGG_API_VERSIONS = "https://static.u.gg/assets/lol/riot_patch_update/prod/ugg/ugg-api-versions.json"
+    UGG_PRIMARY_ROLES = "https://stats2.u.gg/lol/1.1/primary_roles/{underscored_patch}/{ugg_primary_roles_api_version}.json"
+    UGG_OVERVIEW = "https://stats2.u.gg/lol/1.1/overview/{underscored_patch}/{ugg_queue_name}/{champion_id}/{ugg_overview_api_version}.json"
+    UGG_RANKINGS = "https://stats2.u.gg/lol/1.1/rankings/{underscored_patch}/{ugg_queue_name}/{champion_id}/{ugg_rankings_api_version}.json"
 
     def __init__(self, champion_id: str, current_queue: Queue, underscored_patch: str):
         session = requests.Session()
         session.headers.update({"User-Agent": UAS})
 
+        ugg_api_versions = (
+            session.get(self.UGG_API_VERSIONS).json().get(underscored_patch)
+        )
+        if ugg_api_versions is None:
+            raise NoDataError
+        ugg_primary_roles_api_version = ugg_api_versions["primary_roles"]
+        ugg_overview_api_version = ugg_api_versions["overview"]
+        ugg_rankings_api_version = ugg_api_versions["rankings"]
+
         try:
             self.primary_roles = (
                 session.get(
-                    self.UGG_PRIMARY_ROLES.format(underscored_patch=underscored_patch)
+                    self.UGG_PRIMARY_ROLES.format(
+                        underscored_patch=underscored_patch,
+                        ugg_primary_roles_api_version=ugg_primary_roles_api_version,
+                    )
                 )
                 .json()
                 .get(champion_id)
@@ -69,6 +81,7 @@ class Fetcher:
                     underscored_patch=underscored_patch,
                     ugg_queue_name=current_queue.ugg_queue_name,
                     champion_id=champion_id,
+                    ugg_overview_api_version=ugg_overview_api_version,
                 )
             ).json()
             self.rankings = session.get(
@@ -76,6 +89,7 @@ class Fetcher:
                     underscored_patch=underscored_patch,
                     ugg_queue_name=current_queue.ugg_queue_name,
                     champion_id=champion_id,
+                    ugg_rankings_api_version=ugg_rankings_api_version,
                 )
             ).json()
         except JSONDecodeError:
