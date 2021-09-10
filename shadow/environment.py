@@ -1,12 +1,11 @@
 from shadow.config import Config
 from shadow.static import CONFIG_FILENAME
 
-__version__ = "1.6.1"
-
 config = Config()
 
+
 def print_info():
-    print(f"Shadow v{__version__}")
+    print(f"Shadow")
     print("-------")
     print("Options:")
     if config.is_new:

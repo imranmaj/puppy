@@ -21,8 +21,14 @@ class UGG:
         self.current_queue = current_queue
         self.assigned_role = assigned_role
 
-        current_patch_data = Fetcher(champion_id, current_queue, Patches.get_format_underscore_current_patch())
-        if config.revert_patch:
+
+        revert_patch = config.revert_patch
+        try:
+            current_patch_data = Fetcher(champion_id, current_queue, Patches.get_format_underscore_current_patch())
+        except NoDataError:
+            print("No data on current patch, attempting to revert to previous patch")
+            revert_patch = True
+        if revert_patch:
             try:
                 previous_patch_data = Fetcher(champion_id, current_queue, Patches.get_format_underscore_previous_patch())
             except NoDataError:

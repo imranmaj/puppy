@@ -1,6 +1,6 @@
 from time import sleep
 
-from shadow.environment import __version__, print_info
+from shadow.environment import print_info
 from shadow.apis import Champions
 from shadow.ugg import UGG
 from shadow.static import ALL_ROLES, SLEEP_TIME, GAMEFLOW_PHASE

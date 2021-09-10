@@ -44,10 +44,10 @@ REVERSED_ROLES = {v : k for k, v in ROLES.items()}
 
 class Fetcher:
     UGG_PRIMARY_ROLES = (
-        "https://stats2.u.gg/lol/1.1/primary_roles/{underscored_patch}/1.4.0.json"
+        "https://stats2.u.gg/lol/1.1/primary_roles/{underscored_patch}/1.5.0.json"
     )
-    UGG_OVERVIEW = "https://stats2.u.gg/lol/1.1/overview/{underscored_patch}/{ugg_queue_name}/{champion_id}/1.4.0.json"
-    UGG_RANKINGS = "https://stats2.u.gg/lol/1.1/rankings/{underscored_patch}/{ugg_queue_name}/{champion_id}/1.4.0.json"
+    UGG_OVERVIEW = "https://stats2.u.gg/lol/1.1/overview/{underscored_patch}/{ugg_queue_name}/{champion_id}/1.5.0.json"
+    UGG_RANKINGS = "https://stats2.u.gg/lol/1.1/rankings/{underscored_patch}/{ugg_queue_name}/{champion_id}/1.5.0.json"
 
     def __init__(self, champion_id: str, current_queue: Queue, underscored_patch: str):
         session = requests.Session()
