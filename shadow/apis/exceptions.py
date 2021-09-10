@@ -7,6 +7,7 @@ class LeagueProcessNotFoundError(Exception):
         else:
             super().__init__(DEFAULT)
 
+
 class UnsupportedPlatformError(Exception):
     def __init__(self, *args, **kwargs):
         DEFAULT = "Only macOS and Windows are supported"

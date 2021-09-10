@@ -26,7 +26,9 @@ class Champions:
         """
 
         for champion in cls.champions.values():
-            if cls.remove_punctuation(champion["name"]).casefold().replace(" ", "") == cls.remove_punctuation(name).casefold().replace(" ", ""):
+            if cls.remove_punctuation(champion["name"]).casefold().replace(
+                " ", ""
+            ) == cls.remove_punctuation(name).casefold().replace(" ", ""):
                 return champion["key"]
 
     @classmethod
@@ -79,7 +81,10 @@ class Champions:
         """
 
         for champion in cls.champions.values():
-            if cls.remove_punctuation(champion["id"]).casefold() == cls.remove_punctuation(alternate_name).casefold():
+            if (
+                cls.remove_punctuation(champion["id"]).casefold()
+                == cls.remove_punctuation(alternate_name).casefold()
+            ):
                 return champion["key"]
 
     @classmethod

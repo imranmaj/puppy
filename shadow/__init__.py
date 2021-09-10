@@ -18,7 +18,7 @@ def main():
 
     while True:
         # exit if in game
-        if lcu_interface.get_gameflow_phase()  == GAMEFLOW_PHASE.IN_PROGRESS:
+        if lcu_interface.get_gameflow_phase() == GAMEFLOW_PHASE.IN_PROGRESS:
             print("In game, exiting...")
             raise SystemExit
 
@@ -48,7 +48,7 @@ def main():
         # main loop
         while True:
             # if we leave champ select, quit
-            if lcu_interface.get_gameflow_phase() != GAMEFLOW_PHASE.CHAMP_SELECT:   
+            if lcu_interface.get_gameflow_phase() != GAMEFLOW_PHASE.CHAMP_SELECT:
                 print("No longer in champ select", end="\n\n")
                 break
 
@@ -63,13 +63,19 @@ def main():
                 print("Locked in", champion_name)
                 # get champ data
                 print("Fetching data...")
-                ugg = UGG(champion_id=Champions.id_for_name(champion_name), current_queue=current_queue, assigned_role=assigned_role)
+                ugg = UGG(
+                    champion_id=Champions.id_for_name(champion_name),
+                    current_queue=current_queue,
+                    assigned_role=assigned_role,
+                )
                 print("Retrieved data")
 
                 print("Building rune pages...")
                 # delete old pages
                 rune_pages = lcu_interface.get_rune_pages()
-                editable_rune_pages = [page for page in rune_pages if page["isEditable"]]
+                editable_rune_pages = [
+                    page for page in rune_pages if page["isEditable"]
+                ]
                 for rune_page in editable_rune_pages:
                     for role in ALL_ROLES:
                         if role.display_role_name in rune_page["name"]:
@@ -93,7 +99,9 @@ def main():
                     lcu_interface.post_rune_page(rune_page)
                     # remember id of assigned rune page to set it as active later
                     if rune_page["isActive"]:
-                        assigned_role_rune_page_id = lcu_interface.get_current_rune_page()["id"]
+                        assigned_role_rune_page_id = lcu_interface.get_current_rune_page()[
+                            "id"
+                        ]
                 # set current rune page to assigned role
                 if assigned_role_rune_page_id:
                     lcu_interface.set_current_rune_page(str(assigned_role_rune_page_id))
@@ -101,8 +109,12 @@ def main():
 
             # get role of current rune page
             current_rune_page = lcu_interface.get_current_rune_page()
-            if current_rune_page["name"] in [role.display_role_name for role in ALL_ROLES]:
-                current_rune_page_role = ALL_ROLES.get_role_by_display_role_name(current_rune_page["name"])
+            if current_rune_page["name"] in [
+                role.display_role_name for role in ALL_ROLES
+            ]:
+                current_rune_page_role = ALL_ROLES.get_role_by_display_role_name(
+                    current_rune_page["name"]
+                )
             # check if champion changed or if we have a different rune page than last time we checked
             if champion_changed or current_rune_page_role != prev_rune_page_role:
                 print("Rune page changed to", current_rune_page_role.display_role_name)
@@ -117,21 +129,25 @@ def main():
                     for role in ALL_ROLES:
                         if item_set["title"].endswith(role.display_short_role_name):
                             break
-                    else: # only keep ones that do not have the name of a role in their title
+                    else:  # only keep ones that do not have the name of a role in their title
                         new_all_item_sets.append(item_set)
                 all_item_sets = new_all_item_sets
 
                 # first abilities order
-                first_abilities_string = "".join(ugg.get_first_abilities(current_rune_page_role).to_str_list())
+                first_abilities_string = "".join(
+                    ugg.get_first_abilities(current_rune_page_role).to_str_list()
+                )
                 # ability max order
-                ability_max_order_string = "".join(ugg.get_max_order(current_rune_page_role).to_str_list())
+                ability_max_order_string = "".join(
+                    ugg.get_max_order(current_rune_page_role).to_str_list()
+                )
 
                 # build new item set
                 new_item_set = ugg.get_items(
                     role=current_rune_page_role,
                     item_set_name=f"{champion_name} {current_rune_page_role.display_short_role_name}",
                     first_abilities_string=first_abilities_string,
-                    ability_max_order_string=ability_max_order_string
+                    ability_max_order_string=ability_max_order_string,
                 ).build()
                 # put item set
                 all_item_sets.append(new_item_set)
@@ -141,13 +157,13 @@ def main():
                 # change summoners
                 print("Editing summoners...")
                 lcu_interface.edit_summoners(ugg.get_summoners(current_rune_page_role))
-                
+
                 print("Done", end="\n\n")
 
             # update variables to check if they have changed in the next poll
             prev_champion_name = champion_name
             prev_rune_page_role = current_rune_page_role
             champion_changed = False
-            
+
             # pause between polls
             sleep(SLEEP_TIME)

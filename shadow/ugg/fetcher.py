@@ -39,7 +39,7 @@ RANKS = {
     "diamond_2_plus": "15",
 }
 ROLES = {"top": "4", "jungle": "1", "mid": "5", "adc": "3", "supp": "2", "none": "6"}
-REVERSED_ROLES = {v : k for k, v in ROLES.items()}
+REVERSED_ROLES = {v: k for k, v in ROLES.items()}
 
 
 class Fetcher:
@@ -54,9 +54,13 @@ class Fetcher:
         session.headers.update({"User-Agent": UAS})
 
         try:
-            self.primary_roles = session.get(
-                self.UGG_PRIMARY_ROLES.format(underscored_patch=underscored_patch)
-            ).json().get(champion_id)
+            self.primary_roles = (
+                session.get(
+                    self.UGG_PRIMARY_ROLES.format(underscored_patch=underscored_patch)
+                )
+                .json()
+                .get(champion_id)
+            )
             # champion exists this patch that did not exist last patch
             if self.primary_roles is None:
                 raise NoDataError
@@ -80,13 +84,19 @@ class Fetcher:
     def primary_roles_data(self) -> RoleList:
         return RoleList(
             [
-                ALL_ROLES.get_role_by_ugg_role_name(REVERSED_ROLES[str(ugg_role_number)])
+                ALL_ROLES.get_role_by_ugg_role_name(
+                    REVERSED_ROLES[str(ugg_role_number)]
+                )
                 for ugg_role_number in self.primary_roles
             ]
         )
 
-    def overview_data(self, region: str, rank: str, role: Role) -> Optional[Dict[str, Any]]:
-        data = self.overview[REGIONS[region]][RANKS[rank]].get(ROLES[str(role.ugg_role_name)])
+    def overview_data(
+        self, region: str, rank: str, role: Role
+    ) -> Optional[Dict[str, Any]]:
+        data = self.overview[REGIONS[region]][RANKS[rank]].get(
+            ROLES[str(role.ugg_role_name)]
+        )
         if data is None:
             return
         data = data[0]
@@ -143,7 +153,9 @@ class Fetcher:
             "shards": {"matches": data[8][0], "wins": data[8][1], "shards": data[8][2]},
         }
 
-    def rankings_data(self, region: str, rank: str, role: Role) -> Optional[Dict[str, Any]]:
+    def rankings_data(
+        self, region: str, rank: str, role: Role
+    ) -> Optional[Dict[str, Any]]:
         data = self.rankings[REGIONS[region]][RANKS[rank]].get(
             ROLES[str(role.ugg_role_name)]
         )

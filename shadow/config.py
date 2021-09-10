@@ -4,6 +4,7 @@ from typing import Any
 
 from shadow.static import CONFIG_FILENAME, DEFAULT_CONFIG
 
+
 class Config:
     def __init__(self):
         if not Path(CONFIG_FILENAME).exists():
@@ -12,7 +13,7 @@ class Config:
                 json.dump(DEFAULT_CONFIG, f, indent=4)
         else:
             self.is_new = False
-    
+
         with open(CONFIG_FILENAME, "r") as f:
             self.config = json.load(f)
 

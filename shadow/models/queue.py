@@ -8,7 +8,9 @@ class Queue:
     Represents a queue (e.g. SR, ARAM)
     """
 
-    def __init__(self, lcu_queue_name: str, ugg_queue_name: str, rank: str, roles: RoleList):
+    def __init__(
+        self, lcu_queue_name: str, ugg_queue_name: str, rank: str, roles: RoleList
+    ):
         """
         lcu_queue_name - lcu name for queue
         ugg_queue_name - ugg name for queue. Must be one of:
@@ -22,6 +24,7 @@ class Queue:
         self.rank = rank
         self.roles = roles
 
+
 class QueueList:
     """
     A list of queues
@@ -33,7 +36,7 @@ class QueueList:
         """
 
         self.queues = queues
-    
+
     def get_queue_by_lcu_queue_name(self, lcu_queue_name: str) -> Optional[Queue]:
         """
         Returns a queue in the list with the given lcu name

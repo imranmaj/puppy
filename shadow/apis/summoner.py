@@ -5,6 +5,7 @@ import requests
 
 from .patches import Patches
 
+
 class Summoner:
     """
     Manipulation of static summoner spell data

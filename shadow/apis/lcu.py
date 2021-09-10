@@ -22,9 +22,7 @@ class Lcu:
         auth = Auth()
 
         self.session = requests.Session()
-        self.session.headers.update({
-            "Accept": "application/json"
-        })
+        self.session.headers.update({"Accept": "application/json"})
         self.session.auth = ("riot", auth.key)
         self.session.verify = False
         self.BASE_URL = f"https://127.0.0.1:{auth.port}/"
@@ -50,7 +48,7 @@ class Lcu:
 
         url = self.make_url(endpoint)
         return self.request("delete", url)
-        
+
     def post(self, endpoint: List[str], data: Any) -> Response:
         """
         POSTs to an endpoint

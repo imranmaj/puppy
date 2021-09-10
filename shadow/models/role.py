@@ -6,7 +6,13 @@ class Role:
     Represents a role (on a team)
     """
 
-    def __init__(self, display_role_name: str, display_short_role_name: str, lcu_role_name: str, ugg_role_name: str):
+    def __init__(
+        self,
+        display_role_name: str,
+        display_short_role_name: str,
+        lcu_role_name: str,
+        ugg_role_name: str,
+    ):
         """
         display_role_name - display name for role
         display_short_role_name - short display name for role
@@ -18,6 +24,7 @@ class Role:
         self.display_short_role_name = display_short_role_name
         self.lcu_role_name = lcu_role_name
         self.ugg_role_name = ugg_role_name
+
 
 class RoleList:
     """
@@ -41,7 +48,9 @@ class RoleList:
             if role.display_role_name == display_role_name:
                 return role
 
-    def get_role_by_display_short_role_name(self, display_short_role_name: str) -> Optional[Role]:
+    def get_role_by_display_short_role_name(
+        self, display_short_role_name: str
+    ) -> Optional[Role]:
         """
         Returns a role given its short display name
         Returns None if there is no role for the short display name
@@ -101,7 +110,7 @@ class RoleList:
         else:
             return
         self.roles.insert(0, self.roles.pop(i))
-    
+
     def __iter__(self):
         return iter(self.roles)
 

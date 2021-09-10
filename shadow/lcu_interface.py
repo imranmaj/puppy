@@ -20,14 +20,18 @@ class LcuInterface:
         Returns a GAMEFLOW_PHASE enum
         """
 
-        return GAMEFLOW_PHASE(self.lcu.get(["lol-gameflow", "v1", "gameflow-phase"]).text.strip("\""))
+        return GAMEFLOW_PHASE(
+            self.lcu.get(["lol-gameflow", "v1", "gameflow-phase"]).text.strip('"')
+        )
 
     def get_current_queue(self) -> Queue:
         """
         Returns the current queue (from QUEUES QueueList)
         """
 
-        queue = QUEUES.get_queue_by_lcu_queue_name(self.lcu.get(["lol-gameflow", "v1", "session"]).json()["map"]["name"])
+        queue = QUEUES.get_queue_by_lcu_queue_name(
+            self.lcu.get(["lol-gameflow", "v1", "session"]).json()["map"]["name"]
+        )
         if not queue:
             queue = QUEUES.get_default()
         return queue
@@ -78,7 +82,9 @@ class LcuInterface:
             if team_member["summonerId"] == self.lcu.get_summoner_id():
                 lcu_role_name = team_member["assignedPosition"]
                 # can just search through sr roles because only sr has assigned roles
-                return QUEUES.get_queue_by_lcu_queue_name("Summoner's Rift").roles.get_role_by_lcu_role_name(lcu_role_name)
+                return QUEUES.get_queue_by_lcu_queue_name(
+                    "Summoner's Rift"
+                ).roles.get_role_by_lcu_role_name(lcu_role_name)
 
     def get_current_rune_page(self) -> Dict[str, Any]:
         """
@@ -135,17 +141,25 @@ class LcuInterface:
         summoners - tuple of summoners ids
         """
 
-        r = self.lcu.patch(["lol-champ-select", "v1", "session", "my-selection"], data={
-            "spell1Id": summoners[0],
-            "spell2Id": summoners[1]
-        })
+        r = self.lcu.patch(
+            ["lol-champ-select", "v1", "session", "my-selection"],
+            data={"spell1Id": summoners[0], "spell2Id": summoners[1]},
+        )
 
     def get_item_sets_data(self) -> Dict[str, Any]:
         """
         Returns all item set data
         """
 
-        return self.lcu.get(["lol-item-sets", "v1", "item-sets", str(self.lcu.get_summoner_id()), "sets"]).json()
+        return self.lcu.get(
+            [
+                "lol-item-sets",
+                "v1",
+                "item-sets",
+                str(self.lcu.get_summoner_id()),
+                "sets",
+            ]
+        ).json()
 
     def put_item_sets_data(self, item_sets_data: dict):
         """
@@ -154,4 +168,13 @@ class LcuInterface:
         item_sets_data - item sets data to put
         """
 
-        r = self.lcu.put(["lol-item-sets", "v1", "item-sets", str(self.lcu.get_summoner_id()), "sets"], data=item_sets_data)
+        r = self.lcu.put(
+            [
+                "lol-item-sets",
+                "v1",
+                "item-sets",
+                str(self.lcu.get_summoner_id()),
+                "sets",
+            ],
+            data=item_sets_data,
+        )

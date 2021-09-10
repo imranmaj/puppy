@@ -6,7 +6,14 @@ class RuneList:
     A list of runes (list of rune integer ids)
     """
 
-    def __init__(self, runes: List[int], rune_page_name: str, primary_style: int, secondary_style: int, active: bool):
+    def __init__(
+        self,
+        runes: List[int],
+        rune_page_name: str,
+        primary_style: int,
+        secondary_style: int,
+        active: bool,
+    ):
         """
         runes - list of integer runes ids to store
         rune_page_name - name of the rune page
@@ -47,6 +54,7 @@ class RuneList:
             "selectedPerkIds": self.runes,
         }
 
+
 class Shard:
     """
     Represents a rune shard
@@ -60,6 +68,7 @@ class Shard:
 
         self.ugg_shard_name = ugg_shard_name
         self.shard_id = shard_id
+
 
 class ShardList:
     """
@@ -82,6 +91,6 @@ class ShardList:
         for shard in self:
             if shard.ugg_shard_name == ugg_shard_name:
                 return shard
-    
+
     def __iter__(self):
         return iter(self.shards)

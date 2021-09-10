@@ -5,12 +5,28 @@ from shadow.exceptions import NoDataError
 from shadow.ugg.fetcher import Fetcher
 from shadow.environment import config
 from shadow.apis import Patches, Runes
-from shadow.models import Queue, Role, RoleList, ItemBlock, ItemSet, RuneList, AbilityList
-from shadow.static import ALL_ROLES, ABILITIES, BASIC_ABILITIES, MIN_ACCEPTABLE_PATCH_MATCH_RATIO, FLASH
+from shadow.models import (
+    Queue,
+    Role,
+    RoleList,
+    ItemBlock,
+    ItemSet,
+    RuneList,
+    AbilityList,
+)
+from shadow.static import (
+    ALL_ROLES,
+    ABILITIES,
+    BASIC_ABILITIES,
+    MIN_ACCEPTABLE_PATCH_MATCH_RATIO,
+    FLASH,
+)
 
 
 class UGG:
-    def __init__(self, champion_id: str, current_queue: Queue, assigned_role: Optional[Role]):
+    def __init__(
+        self, champion_id: str, current_queue: Queue, assigned_role: Optional[Role]
+    ):
         """
         champion_id - id of champion to get data for
         current_queue - Queue to get data for
@@ -22,15 +38,27 @@ class UGG:
         self.assigned_role = assigned_role
 
         try:
-            current_patch_data = Fetcher(champion_id, current_queue, Patches.get_format_underscore_current_patch())
+            current_patch_data = Fetcher(
+                champion_id,
+                current_queue,
+                Patches.get_format_underscore_current_patch(),
+            )
         except NoDataError:
             print("No data on current patch, attempting to revert to previous patch")
-            self.data = Fetcher(champion_id, current_queue, Patches.get_format_underscore_previous_patch())
+            self.data = Fetcher(
+                champion_id,
+                current_queue,
+                Patches.get_format_underscore_previous_patch(),
+            )
             return
 
         if config.revert_patch:
             try:
-                previous_patch_data = Fetcher(champion_id, current_queue, Patches.get_format_underscore_previous_patch())
+                previous_patch_data = Fetcher(
+                    champion_id,
+                    current_queue,
+                    Patches.get_format_underscore_previous_patch(),
+                )
             except NoDataError:
                 print("No data from previous patch")
                 self.data = current_patch_data
@@ -39,20 +67,31 @@ class UGG:
             current_patch_matches = 0
             previous_patch_matches = 0
             for role in ALL_ROLES:
-                data = current_patch_data.rankings_data("world", self.current_queue.rank, role)
+                data = current_patch_data.rankings_data(
+                    "world", self.current_queue.rank, role
+                )
                 if data is not None:
                     current_patch_matches += data["matches"]
-                data = previous_patch_data.rankings_data("world", self.current_queue.rank, role)
+                data = previous_patch_data.rankings_data(
+                    "world", self.current_queue.rank, role
+                )
                 if data is not None:
                     previous_patch_matches += data["matches"]
 
             # use current patch only if max match count of any role in current patch is at least n% of
             # the max match count in any role on the previous patch
-            if current_patch_matches / previous_patch_matches > MIN_ACCEPTABLE_PATCH_MATCH_RATIO:
-                print(f"Using current patch's data ({current_patch_matches}/{previous_patch_matches})")
+            if (
+                current_patch_matches / previous_patch_matches
+                > MIN_ACCEPTABLE_PATCH_MATCH_RATIO
+            ):
+                print(
+                    f"Using current patch's data ({current_patch_matches}/{previous_patch_matches})"
+                )
                 self.data = current_patch_data
             else:
-                print(f"Reverting to previous patch data ({current_patch_matches}/{previous_patch_matches})")
+                print(
+                    f"Reverting to previous patch data ({current_patch_matches}/{previous_patch_matches})"
+                )
                 self.data = previous_patch_data
         else:
             # no reversion, use current patch
@@ -84,24 +123,45 @@ class UGG:
         active - whether the returned rune page should be active
         """
 
-        all_runes = self.data.overview_data("world", self.current_queue.rank, role)["runes"]["runes"]
-        shards = [int(item) for item in self.data.overview_data("world", self.current_queue.rank, role)["shards"]["shards"]]
-        primary_style = self.data.overview_data("world", self.current_queue.rank, role)["runes"]["primary_style"]
-        secondary_style = self.data.overview_data("world", self.current_queue.rank, role)["runes"]["secondary_style"]
-        
+        all_runes = self.data.overview_data("world", self.current_queue.rank, role)[
+            "runes"
+        ]["runes"]
+        shards = [
+            int(item)
+            for item in self.data.overview_data("world", self.current_queue.rank, role)[
+                "shards"
+            ]["shards"]
+        ]
+        primary_style = self.data.overview_data("world", self.current_queue.rank, role)[
+            "runes"
+        ]["primary_style"]
+        secondary_style = self.data.overview_data(
+            "world", self.current_queue.rank, role
+        )["runes"]["secondary_style"]
+
         # lists are not hashable (for lru_cache), use tuple
-        sorted_runes = Runes.sort_runes(tuple(all_runes), primary_style=primary_style, secondary_style=secondary_style)
+        sorted_runes = Runes.sort_runes(
+            tuple(all_runes),
+            primary_style=primary_style,
+            secondary_style=secondary_style,
+        )
 
         return RuneList(
             rune_page_name=role.display_role_name,
             primary_style=primary_style,
             secondary_style=secondary_style,
             runes=sorted_runes + shards,
-            active=active
+            active=active,
         )
-    
+
     @lru_cache()
-    def get_items(self, role: Role, item_set_name: str, first_abilities_string: str, ability_max_order_string: str) -> ItemSet:
+    def get_items(
+        self,
+        role: Role,
+        item_set_name: str,
+        first_abilities_string: str,
+        ability_max_order_string: str,
+    ) -> ItemSet:
         """
         Returns built item set for current champion
 
@@ -110,21 +170,58 @@ class UGG:
         """
 
         starting = ItemBlock(
-            items=self.data.overview_data("world", self.current_queue.rank, role)["starting_items"]["starting_items"] + config.small_items, 
-            block_name=f"Starting/Small Items, Start: {first_abilities_string}"
+            items=self.data.overview_data("world", self.current_queue.rank, role)[
+                "starting_items"
+            ]["starting_items"]
+            + config.small_items,
+            block_name=f"Starting/Small Items, Start: {first_abilities_string}",
         )
-        core = ItemBlock(items=self.data.overview_data("world", self.current_queue.rank, role)["core_items"]["core_items"], block_name=f"Core Items,                    Max: {ability_max_order_string}")
-        item_4_options = ItemBlock(items=[item["item"] for item in self.data.overview_data("world", self.current_queue.rank, role)["item_4_options"]], block_name="Item 4 Options")
-        item_5_options = ItemBlock(items=[item["item"] for item in self.data.overview_data("world", self.current_queue.rank, role)["item_5_options"]], block_name="Item 5 Options")
-        item_6_options = ItemBlock(items=[item["item"] for item in self.data.overview_data("world", self.current_queue.rank, role)["item_6_options"]], block_name="Item 6 Options")
+        core = ItemBlock(
+            items=self.data.overview_data("world", self.current_queue.rank, role)[
+                "core_items"
+            ]["core_items"],
+            block_name=f"Core Items,                    Max: {ability_max_order_string}",
+        )
+        item_4_options = ItemBlock(
+            items=[
+                item["item"]
+                for item in self.data.overview_data(
+                    "world", self.current_queue.rank, role
+                )["item_4_options"]
+            ],
+            block_name="Item 4 Options",
+        )
+        item_5_options = ItemBlock(
+            items=[
+                item["item"]
+                for item in self.data.overview_data(
+                    "world", self.current_queue.rank, role
+                )["item_5_options"]
+            ],
+            block_name="Item 5 Options",
+        )
+        item_6_options = ItemBlock(
+            items=[
+                item["item"]
+                for item in self.data.overview_data(
+                    "world", self.current_queue.rank, role
+                )["item_6_options"]
+            ],
+            block_name="Item 6 Options",
+        )
 
-        return ItemSet(item_blocks=[
-            starting,
-            core,
-            item_4_options,
-            item_5_options,
-            item_6_options
-        ], item_set_name=item_set_name, champion_id=int(self.champion_id), preferred_item_slots=config.preferred_item_slots)
+        return ItemSet(
+            item_blocks=[
+                starting,
+                core,
+                item_4_options,
+                item_5_options,
+                item_6_options,
+            ],
+            item_set_name=item_set_name,
+            champion_id=int(self.champion_id),
+            preferred_item_slots=config.preferred_item_slots,
+        )
 
     @lru_cache()
     def get_summoners(self, role: Role) -> Tuple[int, int]:
@@ -134,9 +231,13 @@ class UGG:
         role - role of current champion
         """
 
-        summoners = self.data.overview_data("world", self.current_queue.rank, role)["summoner_spells"]["summoner_spells"]
+        summoners = self.data.overview_data("world", self.current_queue.rank, role)[
+            "summoner_spells"
+        ]["summoner_spells"]
         # flash is on wrong key
-        if (config.flash_on_f and summoners[0] == FLASH) or (not config.flash_on_f and summoners[1] == FLASH):
+        if (config.flash_on_f and summoners[0] == FLASH) or (
+            not config.flash_on_f and summoners[1] == FLASH
+        ):
             summoners = reversed(summoners)
         return tuple(summoners)
 
@@ -149,7 +250,12 @@ class UGG:
         """
 
         return AbilityList(
-            abilities=[ABILITIES.get_ability_by_key(key) for key in self.data.overview_data("world", self.current_queue.rank, role)["abilities"]["ability_order"]]
+            abilities=[
+                ABILITIES.get_ability_by_key(key)
+                for key in self.data.overview_data(
+                    "world", self.current_queue.rank, role
+                )["abilities"]["ability_order"]
+            ]
         )
 
     @lru_cache()
@@ -163,7 +269,7 @@ class UGG:
         first_abilities = []
         for ability in self.get_abilities(role):
             if all([ability in first_abilities for ability in BASIC_ABILITIES]):
-                break # stop when we've seen every basic ability at least once
+                break  # stop when we've seen every basic ability at least once
             else:
                 first_abilities.append(ability)
 
@@ -178,5 +284,10 @@ class UGG:
         """
 
         return AbilityList(
-            abilities=[ABILITIES.get_ability_by_key(key) for key in self.data.overview_data("world", self.current_queue.rank, role)["abilities"]["ability_max_order"]]
+            abilities=[
+                ABILITIES.get_ability_by_key(key)
+                for key in self.data.overview_data(
+                    "world", self.current_queue.rank, role
+                )["abilities"]["ability_max_order"]
+            ]
         )

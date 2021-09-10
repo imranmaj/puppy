@@ -16,6 +16,7 @@ class Ability:
     def __str__(self):
         return self.key
 
+
 class AbilityList:
     """
     A list of abilities
