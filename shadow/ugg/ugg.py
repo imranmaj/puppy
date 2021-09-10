@@ -113,7 +113,7 @@ class UGG:
             items=self.data.overview_data("world", self.current_queue.rank, role)["starting_items"]["starting_items"] + config.small_items, 
             block_name=f"Starting/Small Items, Start: {first_abilities_string}"
         )
-        core = ItemBlock(items=self.data.overview_data("world", self.current_queue.rank, role)["core_items"]["core_items"], block_name=f"Core Items,                  Max:  {ability_max_order_string}")
+        core = ItemBlock(items=self.data.overview_data("world", self.current_queue.rank, role)["core_items"]["core_items"], block_name=f"Core Items,                    Max: {ability_max_order_string}")
         item_4_options = ItemBlock(items=[item["item"] for item in self.data.overview_data("world", self.current_queue.rank, role)["item_4_options"]], block_name="Item 4 Options")
         item_5_options = ItemBlock(items=[item["item"] for item in self.data.overview_data("world", self.current_queue.rank, role)["item_5_options"]], block_name="Item 5 Options")
         item_6_options = ItemBlock(items=[item["item"] for item in self.data.overview_data("world", self.current_queue.rank, role)["item_6_options"]], block_name="Item 6 Options")
