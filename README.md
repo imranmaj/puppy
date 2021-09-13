@@ -12,18 +12,18 @@ League of Legends runes, summoner spells, items, and ability order fetcher
 * Uses caching for optimal performance
 * Detects whether to use previous patch's data if there is not enough data on this patch to give accurate information
 
-## Before using
+## Setup
 
-* Install Python 3.7+
-* Clone this repository, or download it as a zip file and extract it
-* Run `python3 -m pip install -r requirements.txt --user` to install dependencies
+1. Install Python 3.7+
+2. Clone this repository, or download it as a zip file and extract it
+3. Run `pip install -r requirements.txt` to install dependencies
 
 ## Usage
 
-* Open League of Legends
-* Run `python3 -m puppy` from the command line, or run `puppy.bat`
-* Go through champ select and lock in a champion
-* Select the rune page whose name is your role (e.g., if you are playing mid, select the rune page called "Middle")
+1. Open League of Legends
+2. Run `python -m puppy` from the command line, or run `puppy.bat`
+3. Go through champ select and lock in a champion
+4. Select the rune page whose name is your role (e.g., if you are playing mid, select the rune page called "Middle")
 
 Your summoner spells and items should be updated automatically whenever you choose a new role using rune pages. Your ability upgrade orders can be found in the names of the item blocks in the in-game shop.
 
