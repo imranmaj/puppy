@@ -1,10 +1,10 @@
 from time import sleep
 
-from shadow.environment import print_info
-from shadow.apis import Champions
-from shadow.ugg import UGG
-from shadow.static import ALL_ROLES, SLEEP_TIME, GAMEFLOW_PHASE
-from shadow.lcu_interface import LcuInterface
+from puppy.environment import print_info
+from puppy.apis import Champions
+from puppy.ugg import UGG
+from puppy.static import ALL_ROLES, SLEEP_TIME, GAMEFLOW_PHASE
+from puppy.lcu_interface import LcuInterface
 
 
 def main():

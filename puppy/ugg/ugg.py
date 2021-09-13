@@ -1,11 +1,11 @@
 from typing import Optional, Tuple
 from functools import lru_cache
 
-from shadow.exceptions import NoDataError
-from shadow.ugg.fetcher import Fetcher
-from shadow.environment import config
-from shadow.apis import Patches, Runes
-from shadow.models import (
+from puppy.exceptions import NoDataError
+from puppy.ugg.fetcher import Fetcher
+from puppy.environment import config
+from puppy.apis import Patches, Runes
+from puppy.models import (
     Queue,
     Role,
     RoleList,
@@ -14,7 +14,7 @@ from shadow.models import (
     RuneList,
     AbilityList,
 )
-from shadow.static import (
+from puppy.static import (
     ALL_ROLES,
     ABILITIES,
     BASIC_ABILITIES,

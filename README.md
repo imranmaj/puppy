@@ -1,6 +1,6 @@
-# Shadow
+# Puppy
 
-Runes, summoner spells, items, and ability order helper
+League of Legends runes, summoner spells, items, and ability order fetcher
 
 ## Overview
 
@@ -21,7 +21,7 @@ Runes, summoner spells, items, and ability order helper
 ## Usage
 
 * Open League of Legends
-* Run `python3 -m shadow` from the command line, or run `shadow.bat`
+* Run `python3 -m puppy` from the command line, or run `puppy.bat`
 * Go through champ select and lock in a champion
 * Select the rune page whose name is your role (e.g., if you are playing mid, select the rune page called "Middle")
 
@@ -29,7 +29,7 @@ Your summoner spells and items should be updated automatically whenever you choo
 
 ## Config File
 
-The first time you run Shadow, a configuration file will be created named `config.json`. Edit this file to customize how shadow runs. See below for available options.
+The first time you run puppy, a configuration file will be created named `config.json`. Edit this file to customize how puppy runs. See below for available options.
 
 #### flash_on_f
 

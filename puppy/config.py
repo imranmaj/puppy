@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from shadow.static import CONFIG_FILENAME, DEFAULT_CONFIG
+from puppy.static import CONFIG_FILENAME, DEFAULT_CONFIG
 
 
 class Config:

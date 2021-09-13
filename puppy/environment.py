@@ -1,11 +1,11 @@
-from shadow.config import Config
-from shadow.static import CONFIG_FILENAME
+from puppy.config import Config
+from puppy.static import CONFIG_FILENAME
 
 config = Config()
 
 
 def print_info():
-    print(f"Shadow")
+    print(f"Puppy")
     print("-------")
     print("Options:")
     if config.is_new:

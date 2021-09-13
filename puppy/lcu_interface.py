@@ -1,9 +1,9 @@
 from time import sleep
 from typing import Dict, Tuple, Optional, Any
 
-from shadow.apis import Lcu
-from shadow.static import QUEUES, GAMEFLOW_PHASE
-from shadow.models import Queue, Role
+from puppy.apis import Lcu
+from puppy.static import QUEUES, GAMEFLOW_PHASE
+from puppy.models import Queue, Role
 
 
 class LcuInterface:

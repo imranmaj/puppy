@@ -4,9 +4,9 @@ from json import JSONDecodeError
 
 import requests
 
-from shadow.static import UAS, ALL_ROLES
-from shadow.models import RoleList, Role, Queue
-from shadow.exceptions import NoDataError
+from puppy.static import UAS, ALL_ROLES
+from puppy.models import RoleList, Role, Queue
+from puppy.exceptions import NoDataError
 
 
 REGIONS = {

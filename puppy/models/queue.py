@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from shadow.models.role import RoleList
+from puppy.models.role import RoleList
 
 
 class Queue:

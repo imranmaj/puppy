@@ -1,7 +1,7 @@
 from itertools import chain
 from enum import Enum
 
-from shadow.models import (
+from puppy.models import (
     Queue,
     QueueList,
     Role,
