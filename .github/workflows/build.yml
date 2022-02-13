@@ -31,16 +31,16 @@ jobs:
       - name: Build Windows binary
         if: ${{ matrix.os == 'windows' }}
         run: |
-          pyinstaller --onefile --windowed ./puppy/__main__.py
+          pyinstaller --onefile --console ./puppy/__main__.py
           mv ./dist/__main__.exe ./dist/puppy.exe
       - name: Build macOS binary
         if: ${{ matrix.os == 'macos' }}
         run: |
-          pyinstaller --onefile --console ./puppy/__main__.py
-          mkdir entry
-          mv ./dist/__main__.app ./entry/puppy.app
-          hdiutil create -volname puppy -srcfolder entry temp.dmg
-          hdiutil convert temp.dmg -format UDRW -o puppy.dmg
+          pyinstaller --onefile --windowed ./puppy/__main__.py
+          mkdir ./dist/entry
+          mv ./dist/__main__.app ./dist/entry/puppy.app
+          hdiutil create -volname puppy -srcfolder ./dist/entry ./dist/temp.dmg
+          hdiutil convert ./dist/temp.dmg -format UDRW -o ./dist/puppy.dmg
       - name: Upload binary
         uses: actions/upload-release-asset@v1.0.2
         env:
