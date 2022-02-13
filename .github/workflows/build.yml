@@ -14,8 +14,10 @@ jobs:
         include:
           - os: macos-latest
             ext: app
+            windowed: true
           - os: windows-latest
             ext: exe
+            windowed: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v2.4.0
@@ -28,9 +30,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r build-requirements.txt
-      - name: Build binary
+      - name: Build windowed binary
+        if: ${{ matrix.windowed }}
         run: |
-          pyinstaller --onefile puppy/__main__.py
+          pyinstaller --onefile --windowed puppy/__main__.py
+          mv ./dist/__main__.${{ matrix.ext }} ./dist/puppy.${{ matrix.ext }}
+      - name: Build console binary
+        if: ${{ !matrix.windowed }}
+        run: |
+          pyinstaller --onefile --console puppy/__main__.py
           mv ./dist/__main__.${{ matrix.ext }} ./dist/puppy.${{ matrix.ext }}
       - name: Upload binary
         uses: actions/upload-release-asset@v1.0.2
