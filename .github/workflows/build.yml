@@ -8,16 +8,14 @@ on:
 jobs:
   build:
     name: Build binary
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
         include:
-          - os: macos-latest
-            ext: app
-            windowed: true
-          - os: windows-latest
+          - os: macos
+            ext: dmg
+          - os: windows
             ext: exe
-            windowed: false
     steps:
       - name: Checkout code
         uses: actions/checkout@v2.4.0
@@ -30,16 +28,19 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r build-requirements.txt
-      - name: Build windowed binary
-        if: ${{ matrix.windowed }}
+      - name: Build Windows binary
+        if: ${{ matrix.os == windows }}
         run: |
           pyinstaller --onefile --windowed ./puppy/__main__.py
-          mv ./dist/__main__.${{ matrix.ext }} ./dist/puppy.${{ matrix.ext }}
-      - name: Build console binary
-        if: ${{ !matrix.windowed }}
+          mv ./dist/__main__.exe ./dist/puppy.exe
+      - name: Build macOS binary
+        if: ${{ matrix.os == macos }}
         run: |
           pyinstaller --onefile --console ./puppy/__main__.py
-          mv ./dist/__main__.${{ matrix.ext }} ./dist/puppy.${{ matrix.ext }}
+          mkdir entry
+          mv ./dist/__main__.app ./entry/puppy.app
+          hdiutil create -volname puppy -srcfolder entry temp.dmg
+          hdiutil convert temp.dmg -format UDRW -o puppy.dmg
       - name: Upload binary
         uses: actions/upload-release-asset@v1.0.2
         env:
