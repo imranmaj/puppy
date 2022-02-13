@@ -33,12 +33,12 @@ jobs:
       - name: Build windowed binary
         if: ${{ matrix.windowed }}
         run: |
-          pyinstaller --onefile --windowed puppy/__main__.py
+          pyinstaller --onefile --windowed ./puppy/__main__.py
           mv ./dist/__main__.${{ matrix.ext }} ./dist/puppy.${{ matrix.ext }}
       - name: Build console binary
         if: ${{ !matrix.windowed }}
         run: |
-          pyinstaller --onefile --console puppy/__main__.py
+          pyinstaller --onefile --console ./puppy/__main__.py
           mv ./dist/__main__.${{ matrix.ext }} ./dist/puppy.${{ matrix.ext }}
       - name: Upload binary
         uses: actions/upload-release-asset@v1.0.2
