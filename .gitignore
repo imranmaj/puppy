@@ -4,3 +4,8 @@ __pycache__/
 config.json
 test*
 apis.txt
+
+# pyinstaller
+build/*
+dist/*
+*.spec

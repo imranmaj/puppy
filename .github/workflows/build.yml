@@ -1,0 +1,47 @@
+name: Build binary
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  build:
+    name: Build binary
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: macos-latest
+            ext: app
+          - os: windows-latest
+            ext: exe
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2.4.0
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2.3.2
+        with:
+          python-version: "3.8"
+      - name: Install dependencies and build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r build-requirements.txt
+      - name: Build binary
+        run: |
+          pyinstaller --onefile puppy/__main__.py
+          mv ./dist/__main__.${{ matrix.ext }} ./dist/puppy.${{ matrix.ext }}
+      - name: Upload binary
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # https://docs.github.com/en/rest/reference/releases#upload-a-release-asset
+          # https://github.community/t/can-you-add-binaries-to-releases-with-github-actions/16665/8
+          # https://docs.github.com/en/developers/webhooks-and-events/webhooks/webhook-events-and-payloads#release
+          # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#release
+          upload_url: ${{ github.event.release.upload_url }} # https://docs.github.com/en/actions/learn-github-actions/contexts#github-context 
+          asset_path: ./dist/puppy.${{ matrix.ext }}
+          asset_name: puppy.${{ matrix.ext }}
+          asset_content_type: application/octet-stream
