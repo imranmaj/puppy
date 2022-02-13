@@ -29,12 +29,12 @@ jobs:
           pip install -r requirements.txt
           pip install -r build-requirements.txt
       - name: Build Windows binary
-        if: ${{ matrix.os == windows }}
+        if: ${{ matrix.os == 'windows' }}
         run: |
           pyinstaller --onefile --windowed ./puppy/__main__.py
           mv ./dist/__main__.exe ./dist/puppy.exe
       - name: Build macOS binary
-        if: ${{ matrix.os == macos }}
+        if: ${{ matrix.os == 'macos' }}
         run: |
           pyinstaller --onefile --console ./puppy/__main__.py
           mkdir entry
