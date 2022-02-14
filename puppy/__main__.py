@@ -3,6 +3,7 @@ from pathlib import Path
 import platform
 import sys
 import subprocess
+import traceback
 
 
 if platform.system() == "Darwin" and not sys.stdout.isatty():
@@ -26,4 +27,8 @@ else:
 
     from puppy import main
 
-    main()
+    try:
+        main()
+    except:
+        traceback.print_exc()
+        input("\nPress enter to exit...")
