@@ -4,7 +4,7 @@ League of Legends runes, summoner spells, items, and ability order fetcher
 
 ## Overview
 
-* Automatic creates rune pages, edits summoner spells, and builds item sets. Open your shop to see your ability upgrade orders.
+* Automatically creates rune pages, edits summoner spells, and builds item sets. Open your shop to see your ability upgrade orders.
 * Supports changing champion (e.g., trades, ARAM bench)
 * Supports different roles (for when there are different runes, summoner spells, items, or ability orders depending on the role your champion is played in)
 * Detects your assigned role and switches your runes and items to match that role by default
