@@ -14,14 +14,25 @@ League of Legends runes, summoner spells, items, and ability order fetcher
 
 ## Setup
 
+### Pre-compiled Binaries
+
+1. Navigate to the [releases page](https://github.com/imranmaj/puppy/releases)
+2. Download the binary for your platform from the latest release and open it
+
+On Windows, if you get a blue window which says "Window protected your PC," press "More info" then "Run anyway."
+
+On Mac, open the DMG file and drag the puppy.app to another location on your computer. If you get a window which says "puppy.app is an app downloaded from the internet" or "\_\_main\_\_ is a Unix app downloaded from the internet," press "Open." If you see "puppy.app cannot be opened because the developer cannot be verified," right-click on puppy.app and press "Open," then on the screen which asks "Are you sure you want to open it?" press "Open."
+
+### Running from source
+
 1. Install Python 3.7+
-2. Clone this repository, or download it as a zip file and extract it
-3. Run `pip install -r requirements.txt` to install dependencies
+2. `pip install -r requirements.txt`
+3. `python -m puppy`
 
 ## Usage
 
 1. Open League of Legends
-2. Run `python -m puppy` from the command line, or run `puppy.bat`
+2. Run puppy
 3. Go through champ select and lock in a champion
 4. Select the rune page whose name is your role (e.g., if you are playing mid, select the rune page called "Middle")
 
