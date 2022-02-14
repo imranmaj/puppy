@@ -13,7 +13,7 @@ if platform.system() == "Darwin" and not sys.stdout.isatty():
             "open",
             "-a",
             "Terminal",
-            Path(os.path.realpath(sys.argv[0])).parent / "__main__",
+            os.path.realpath(sys.argv[0])
         ]
     )
 else:

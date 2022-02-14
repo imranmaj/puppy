@@ -39,8 +39,7 @@ jobs:
           pyinstaller --onefile --windowed ./puppy/__main__.py
           mkdir ./dist/entry
           mv ./dist/__main__.app ./dist/entry/puppy.app
-          hdiutil create -volname puppy -srcfolder ./dist/entry ./dist/temp.dmg
-          hdiutil convert ./dist/temp.dmg -format UDRW -o ./dist/puppy.dmg
+          hdiutil create -volname puppy -srcfolder ./dist/entry ./dist/puppy.dmg
       - name: Upload binary
         uses: actions/upload-release-asset@v1.0.2
         env:
