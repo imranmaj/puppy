@@ -29,6 +29,6 @@ else:
 
     try:
         main()
-    except:
+    except Exception:
         traceback.print_exc()
         input("\nPress enter to exit...")
