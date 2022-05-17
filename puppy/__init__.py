@@ -2,7 +2,7 @@ from time import sleep
 
 from puppy.environment import print_info
 from puppy.apis import Champions
-from puppy.apis.data.ugg import UGG
+from puppy.apis.data import DataSource
 from puppy.static import ALL_ROLES, SLEEP_TIME, GAMEFLOW_PHASE
 from puppy.lcu_interface import LcuInterface
 
@@ -58,12 +58,12 @@ def main():
             if prev_champion_name != champion_name:
                 champion_changed = True
 
-                # request data from ugg
+                # request data
                 print("-" * 20, end="\n\n")
                 print("Locked in", champion_name)
                 # get champ data
                 print("Fetching data...")
-                ugg = UGG(
+                data_source = DataSource(
                     champion_id=champion_id,
                     current_queue=current_queue,
                     assigned_role=assigned_role,
@@ -84,13 +84,13 @@ def main():
 
                 # build rune pages for correct map and post them
                 rune_pages_to_add = []
-                for i, role in enumerate(ugg.get_roles()):
+                for i, role in enumerate(data_source.get_roles()):
                     # make the page for assigned role active
                     active = role == assigned_role
                     # most popular role is active if there is no assigned role
                     if assigned_role is None and i == 0:
                         active = True
-                    new_rune_page = ugg.get_runes(role, active=active).build()
+                    new_rune_page = data_source.get_runes(role, active=active).build()
                     rune_pages_to_add.append(new_rune_page)
 
                 # search through rune pages for the one marked as active
@@ -107,7 +107,7 @@ def main():
                     lcu_interface.set_current_rune_page(str(assigned_role_rune_page_id))
                 print("Done", end="\n\n")
             else:
-                ugg = None
+                data_source = None
 
             # get role of current rune page
             current_rune_page = lcu_interface.get_current_rune_page()
@@ -120,7 +120,7 @@ def main():
             # check if champion changed or if we have a different rune page than last time we checked
             if champion_changed or current_rune_page_role != prev_rune_page_role:
                 assert current_rune_page_role is not None
-                assert ugg is not None
+                assert data_source is not None
 
                 print("Rune page changed to", current_rune_page_role.display_role_name)
                 print("Building item set...")
@@ -140,15 +140,15 @@ def main():
 
                 # first abilities order
                 first_abilities_string = "".join(
-                    ugg.get_first_abilities(current_rune_page_role).to_str_list()
+                    data_source.get_first_abilities(current_rune_page_role).to_str_list()
                 )
                 # ability max order
                 ability_max_order_string = "".join(
-                    ugg.get_max_order(current_rune_page_role).to_str_list()
+                    data_source.get_max_order(current_rune_page_role).to_str_list()
                 )
 
                 # build new item set
-                new_item_set = ugg.get_items(
+                new_item_set = data_source.get_items(
                     role=current_rune_page_role,
                     item_set_name=f"{champion_name} {current_rune_page_role.display_short_role_name}",
                     first_abilities_string=first_abilities_string,
@@ -161,7 +161,7 @@ def main():
 
                 # change summoners
                 print("Editing summoners...")
-                lcu_interface.edit_summoners(ugg.get_summoners(current_rune_page_role))
+                lcu_interface.edit_summoners(data_source.get_summoners(current_rune_page_role))
 
                 print("Done", end="\n\n")
 

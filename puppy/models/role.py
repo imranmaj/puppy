@@ -12,18 +12,21 @@ class Role:
         display_short_role_name: str,
         lcu_role_name: str,
         ugg_role_name: str,
+        mobalytics_role_name: str
     ):
         """
         display_role_name - display name for role
         display_short_role_name - short display name for role
         lcu_role_name - lcu name for role
         ugg_role_name - ugg name for role
+        mobalytics_role_name - mobalytics name for role
         """
 
         self.display_role_name = display_role_name
         self.display_short_role_name = display_short_role_name
         self.lcu_role_name = lcu_role_name
         self.ugg_role_name = ugg_role_name
+        self.mobalytics_role_name = mobalytics_role_name
 
     def __repr__(self) -> str:
         return self.display_role_name

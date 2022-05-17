@@ -43,3 +43,11 @@ class Patches:
 
         previous_patch = cls.get_all_patches()[1]
         return "_".join(previous_patch.split(".")[:2])
+
+    @staticmethod
+    def major_minor(patch: str) -> str:
+        """
+        Returns only the major and minor parts of a patch
+        """
+
+        return ".".join(patch.split(".")[:2])

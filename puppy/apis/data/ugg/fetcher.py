@@ -1,4 +1,3 @@
-import json
 from typing import Dict, Any, Optional
 from json import JSONDecodeError
 
@@ -6,7 +5,7 @@ import requests
 
 from puppy.static import UAS, ALL_ROLES
 from puppy.models import RoleList, Role, Queue
-from puppy.apis.data.ugg.exceptions import NoDataError
+from puppy.apis.data.exceptions import NoDataError
 
 
 REGIONS = {

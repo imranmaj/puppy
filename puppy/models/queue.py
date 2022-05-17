@@ -9,18 +9,21 @@ class Queue:
     """
 
     def __init__(
-        self, lcu_queue_name: str, ugg_queue_name: str, rank: str, roles: RoleList
+        self, lcu_queue_name: str, ugg_queue_name: str, mobalytics_queue_name: str, rank: str, roles: RoleList
     ):
         """
         lcu_queue_name - lcu name for queue
         ugg_queue_name - ugg name for queue. Must be one of:
             ["ranked_solo_5x5", "ranked_flex_sr", "nexus_blitz", "normal_aram", "normal_blind_5x5", "normal_draft_5x5"]
+        mobalytics_queue_name - mobalytics name for queue. Must be one of:
+            ["RANKED_SOLO", "ARAM"]
         rank - name of rank to get data for
         roles - RoleList of roles for this queue
         """
 
         self.lcu_queue_name = lcu_queue_name
         self.ugg_queue_name = ugg_queue_name
+        self.mobalytics_queue_name = mobalytics_queue_name
         self.rank = rank
         self.roles = roles
 

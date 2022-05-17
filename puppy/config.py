@@ -17,5 +17,12 @@ class Config:
         with open(CONFIG_FILENAME, "r") as f:
             self.config = json.load(f)
 
+        for k, v in DEFAULT_CONFIG.items():
+            if k not in self.config:
+                # config is outdated
+                self.config[k] = v
+                with open(CONFIG_FILENAME, "w") as f:
+                    json.dump(self.config, f, indent=4)
+
     def __getattr__(self, attr: str) -> Any:
         return self.config[attr]

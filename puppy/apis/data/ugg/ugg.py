@@ -1,9 +1,10 @@
 from typing import Optional, Tuple, Dict, Any
 from functools import lru_cache
 
-from puppy.apis.data.ugg.exceptions import NoDataError
+from puppy.apis.data.data_source import DataSourceAbc
+from puppy.apis.data.exceptions import NoDataError
 from puppy.apis.data.ugg.fetcher import Fetcher
-from puppy.apis.data.ugg.exceptions import NoDataError
+from puppy.apis.data.exceptions import NoDataError
 from puppy.environment import config
 from puppy.apis import Patches, Runes, Champions
 from puppy.models import (
@@ -24,7 +25,7 @@ from puppy.static import (
 )
 
 
-class UGG:
+class UGG(DataSourceAbc):
     def __init__(
         self, champion_id: str, current_queue: Queue, assigned_role: Optional[Role]
     ):
@@ -46,7 +47,7 @@ class UGG:
             )
         except NoDataError:
             print("No data on current patch, attempting to revert to previous patch")
-            self.data = Fetcher(
+            self.fetcher = Fetcher(
                 champion_id,
                 current_queue,
                 Patches.get_format_underscore_previous_patch(),
@@ -62,7 +63,7 @@ class UGG:
                 )
             except NoDataError:
                 print("No data from previous patch")
-                self.data = current_patch_data
+                self.fetcher = current_patch_data
                 return
 
             current_patch_matches = 0
@@ -88,19 +89,19 @@ class UGG:
                 print(
                     f"Using current patch's data ({current_patch_matches}/{previous_patch_matches})"
                 )
-                self.data = current_patch_data
+                self.fetcher = current_patch_data
             else:
                 print(
                     f"Reverting to previous patch data ({current_patch_matches}/{previous_patch_matches})"
                 )
-                self.data = previous_patch_data
+                self.fetcher = previous_patch_data
         else:
             # no reversion, use current patch
-            self.data = current_patch_data
+            self.fetcher = current_patch_data
 
     @lru_cache()
     def get_overview_data(self, role: Role) -> Dict[str, Any]:
-        overview_data = self.data.overview_data("world", self.current_queue.rank, role)
+        overview_data = self.fetcher.overview_data("world", self.current_queue.rank, role)
         if overview_data is None:
             raise NoDataError(
                 f"No overview_data for champion={Champions.name_for_id(self.champion_id)}, region=world, queue={self.current_queue}, rank={self.current_queue.rank}, role={role}"
@@ -118,11 +119,11 @@ class UGG:
             return self.current_queue.roles
 
         if self.assigned_role is not None:
-            roles = self.data.primary_roles_data()
+            roles = self.fetcher.primary_roles_data()
             roles.move_to_front(self.assigned_role)
             return roles
         else:
-            return self.data.primary_roles_data()
+            return self.fetcher.primary_roles_data()
 
     @lru_cache()
     def get_runes(self, role: Role, active: bool) -> RuneList:
