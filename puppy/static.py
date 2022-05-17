@@ -98,6 +98,9 @@ QUEUES = QueueList(
     ]
 )
 
+SUMMONERS_RIFT: Queue = QUEUES.get_queue_by_lcu_queue_name("Summoner's Rift")  # type: ignore
+ARAM: Queue = QUEUES.get_queue_by_lcu_queue_name("Howling Abyss")  # type: ignore
+
 # list of all roles
 ALL_ROLES = chain.from_iterable([queue.roles.roles for queue in QUEUES])
 ALL_ROLES = RoleList(roles=[role for role in ALL_ROLES])

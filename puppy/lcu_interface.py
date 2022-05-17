@@ -2,7 +2,7 @@ from time import sleep
 from typing import Dict, Tuple, Optional, Any
 
 from puppy.apis import Lcu
-from puppy.static import QUEUES, GAMEFLOW_PHASE
+from puppy.static import QUEUES, GAMEFLOW_PHASE, SUMMONERS_RIFT
 from puppy.models import Queue, Role
 
 
@@ -82,9 +82,7 @@ class LcuInterface:
             if team_member["summonerId"] == self.lcu.get_summoner_id():
                 lcu_role_name = team_member["assignedPosition"]
                 # can just search through sr roles because only sr has assigned roles
-                return QUEUES.get_queue_by_lcu_queue_name(
-                    "Summoner's Rift"
-                ).roles.get_role_by_lcu_role_name(lcu_role_name) # type: ignore
+                return SUMMONERS_RIFT.roles.get_role_by_lcu_role_name(lcu_role_name) # type: ignore
 
     def get_current_rune_page(self) -> Dict[str, Any]:
         """

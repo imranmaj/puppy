@@ -4,7 +4,7 @@ from puppy.apis.data.exceptions import NoDataError
 
 import requests
 
-from puppy.static import ALL_ROLES, UAS
+from puppy.static import ALL_ROLES, UAS, QUEUES, SUMMONERS_RIFT, ARAM
 from puppy.models import RoleList, Role, Queue
 from puppy.apis.ddragon.patches import Patches
 from puppy.apis.ddragon.champions import Champions
@@ -46,6 +46,8 @@ class Fetcher:
     def __init__(self, champion_id: str, current_queue: Queue, patch: str):
         self.champion_id = champion_id
         self.current_queue = current_queue
+        if self.current_queue not in (SUMMONERS_RIFT, ARAM):
+            self.current_queue = QUEUES.get_default()
         self.patch = patch
 
         self.session = requests.Session()
@@ -62,20 +64,23 @@ class Fetcher:
         )
 
     @lru_cache()
-    def primary_roles(self) -> RoleList:
-        for champion_roles in self.initial_data["championRoles"]["champions"]:
-            if int(self.champion_id) == int(champion_roles["id"]):
-                roles = []
-                for mobalytics_role_name in champion_roles["roles"]:
-                    role = ALL_ROLES.get_role_by_mobalytics_role_name(
-                        mobalytics_role_name
-                    )
-                    if role is not None:
-                        roles.append(role)
-                return RoleList(roles)
-        raise NoDataError(
-            f"No roles data for champion={Champions.name_for_id(self.champion_id)}, queue={self.current_queue}, rank={self.current_queue.rank}, patch={self.patch}"
-        )
+    def current_queue_available_roles(self) -> RoleList:
+        if self.current_queue == ARAM:
+            return ARAM.roles
+        else:  # summoners rift
+            for champion_roles in self.initial_data["championRoles"]["champions"]:
+                if int(self.champion_id) == int(champion_roles["id"]):
+                    roles = []
+                    for mobalytics_role_name in champion_roles["roles"]:
+                        role = ALL_ROLES.get_role_by_mobalytics_role_name(
+                            mobalytics_role_name
+                        )
+                        if role is not None:
+                            roles.append(role)
+                    return RoleList(roles)
+            raise NoDataError(
+                f"No roles data for champion={Champions.name_for_id(self.champion_id)}, queue={self.current_queue}, rank={self.current_queue.rank}, patch={self.patch}"
+            )
 
     @lru_cache()
     def get_build(self, region: str, role: Role) -> Dict[str, Any]:
@@ -88,7 +93,11 @@ class Fetcher:
             rank=self.current_queue.rank,
             patch=self.patch,
         )
-        for build in data_in_role["builds"]["buildsOptions"]["options"]:
+        if self.current_queue == ARAM:
+            builds_list = data_in_role["aramBuilds"]
+        else:
+            builds_list = data_in_role["builds"]
+        for build in builds_list["buildsOptions"]["options"]:
             if build["type"] == "MOST_POPULAR":
                 build_id = build["id"]
                 break
@@ -97,7 +106,7 @@ class Fetcher:
                 f"No data for champion={Champions.name_for_id(self.champion_id)}, queue={self.current_queue}, rank={self.current_queue.rank}, patch={self.patch}"
             )
 
-        build = self.get_data(
+        data = self.get_data(
             champion_id=self.champion_id,
             build_id=build_id,
             role=role,
@@ -105,7 +114,11 @@ class Fetcher:
             region=region,
             rank=self.current_queue.rank,
             patch=self.patch,
-        )["selectedBuild"]["build"]
+        )
+        if self.current_queue == ARAM:
+            build = data["selectedAramBuild"]["build"]
+        else:
+            build = data["selectedBuild"]["build"]
         starter_items = {}
         early_items = {}
         core_items = {}
@@ -129,11 +142,17 @@ class Fetcher:
                 "runes": build["perks"]["IDs"],
             },
             "summoner_spells": build["spells"],
-            "starting_items": starter_items["items"],
-            "early_items": early_items["items"],
-            "core_items": core_items["items"],
-            "situational_items": situational_items["items"],
-            "full_build_items": full_build_items["items"],
+            "starting_items": []
+            if starter_items["items"] is None
+            else starter_items["items"],
+            "early_items": [] if early_items["items"] is None else early_items["items"],
+            "core_items": [] if core_items["items"] is None else core_items["items"],
+            "situational_items": []
+            if situational_items["items"] is None
+            else situational_items["items"],
+            "full_build_items": []
+            if full_build_items["items"] is None
+            else full_build_items["items"],
             "abilities": {
                 "ability_order": build["skillOrder"],
                 "ability_max_order": build["skillMaxOrder"],

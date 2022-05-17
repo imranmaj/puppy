@@ -4,7 +4,7 @@ from json import JSONDecodeError
 
 import requests
 
-from puppy.static import UAS, ALL_ROLES
+from puppy.static import SUMMONERS_RIFT, UAS, ALL_ROLES
 from puppy.models import RoleList, Role, Queue
 from puppy.apis.data.exceptions import NoDataError
 from puppy.apis.ddragon.champions import Champions
@@ -62,7 +62,7 @@ class Fetcher:
             session.get(self.UGG_API_VERSIONS).json().get(underscored_patch)
         )
         if ugg_api_versions is None:
-            raise NoDataError
+            raise NoDataError(f"No version {underscored_patch}")
         ugg_primary_roles_api_version = ugg_api_versions["primary_roles"]
         ugg_overview_api_version = ugg_api_versions["overview"]
         ugg_rankings_api_version = ugg_api_versions["rankings"]
@@ -80,7 +80,9 @@ class Fetcher:
             )
             # champion exists this patch that did not exist last patch
             if self.primary_roles is None:
-                raise NoDataError
+                raise NoDataError(
+                    f"No primary roles, champion={Champions.name_for_id(champion_id)}, queue={current_queue}, rank={current_queue.rank}, patch={underscored_patch}, ugg_primary_roles_api_version={ugg_primary_roles_api_version}"
+                )
             self.overview = session.get(
                 self.UGG_OVERVIEW.format(
                     underscored_patch=underscored_patch,
@@ -98,18 +100,23 @@ class Fetcher:
                 )
             ).json()
         except JSONDecodeError:
-            raise NoDataError
+            raise NoDataError(
+                f"No data, champion={Champions.name_for_id(champion_id)}, queue={current_queue}, rank={current_queue.rank}, patch={underscored_patch}"
+            )
 
     @lru_cache()
-    def primary_roles_data(self) -> RoleList:
-        roles = []
-        for ugg_role_number in self.primary_roles:
-            role = ALL_ROLES.get_role_by_ugg_role_name(
-                REVERSED_ROLES[str(ugg_role_number)]
-            )
-            if role is not None:
-                roles.append(role)
-        return RoleList(roles=roles)
+    def current_queue_available_roles(self) -> RoleList:
+        if self.current_queue == SUMMONERS_RIFT:
+            roles = []
+            for ugg_role_number in self.primary_roles:
+                role = ALL_ROLES.get_role_by_ugg_role_name(
+                    REVERSED_ROLES[str(ugg_role_number)]
+                )
+                if role is not None:
+                    roles.append(role)
+            return RoleList(roles=roles)
+        else:
+            return self.current_queue.roles
 
     @lru_cache()
     def overview_data(self, region: str, role: Role) -> Dict[str, Any]:

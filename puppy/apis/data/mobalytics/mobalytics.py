@@ -16,11 +16,10 @@ from puppy.models import (
     AbilityList,
 )
 from puppy.static import (
-    ALL_ROLES,
     MIN_ACCEPTABLE_PATCH_MATCH_RATIO,
-    QUEUES,
     FLASH,
     ABILITY_NUMBERS,
+    SUMMONERS_RIFT,
 )
 
 
@@ -61,8 +60,8 @@ class Mobalytics(DataSourceAbc):
 
             current_patch_matches = 0
             previous_patch_matches = 0
-            for role in set(previous_patch_data.primary_roles()) & set(
-                current_patch_data.primary_roles()
+            for role in set(previous_patch_data.current_queue_available_roles()) & set(
+                current_patch_data.current_queue_available_roles()
             ):
                 build = current_patch_data.get_build("world", role)
                 current_patch_matches += build["stats"]["matches"]
@@ -89,17 +88,15 @@ class Mobalytics(DataSourceAbc):
 
     @lru_cache()
     def get_roles(self) -> RoleList:
-        summoners_rift = QUEUES.get_summoners_rift()
-        assert summoners_rift is not None
-        if self.current_queue != summoners_rift:
+        if self.current_queue != SUMMONERS_RIFT:
             return self.current_queue.roles
 
         if self.assigned_role is not None:
-            roles = self.fetcher.primary_roles()
+            roles = self.fetcher.current_queue_available_roles()
             roles.move_to_front(self.assigned_role)
             return roles
         else:
-            return self.fetcher.primary_roles()
+            return self.fetcher.current_queue_available_roles()
 
     @lru_cache()
     def get_runes(self, role: Role, active: bool) -> RuneList:

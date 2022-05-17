@@ -6,7 +6,7 @@ from puppy.apis.data.exceptions import NoDataError
 from puppy.apis.data.ugg.fetcher import Fetcher
 from puppy.apis.data.exceptions import NoDataError
 from puppy.environment import config
-from puppy.apis import Patches, Runes, Champions
+from puppy.apis import Patches, Runes
 from puppy.models import (
     Queue,
     Role,
@@ -23,6 +23,7 @@ from puppy.static import (
     MIN_ACCEPTABLE_PATCH_MATCH_RATIO,
     FLASH,
     QUEUES,
+    SUMMONERS_RIFT,
 )
 
 
@@ -69,8 +70,8 @@ class UGG(DataSourceAbc):
 
             current_patch_matches = 0
             previous_patch_matches = 0
-            for role in set(previous_patch_data.primary_roles_data()) & set(
-                current_patch_data.primary_roles_data()
+            for role in set(previous_patch_data.current_queue_available_roles()) & set(
+                current_patch_data.current_queue_available_roles()
             ):
                 data = current_patch_data.rankings_data("world", role)
                 current_patch_matches += data["matches"]
@@ -102,17 +103,15 @@ class UGG(DataSourceAbc):
         Returns RoleList of commonly played roles + assigned role for current champion
         """
 
-        summoners_rift = QUEUES.get_summoners_rift()
-        assert summoners_rift is not None
-        if self.current_queue != summoners_rift:
+        if self.current_queue != SUMMONERS_RIFT:
             return self.current_queue.roles
 
         if self.assigned_role is not None:
-            roles = self.fetcher.primary_roles_data()
+            roles = self.fetcher.current_queue_available_roles()
             roles.move_to_front(self.assigned_role)
             return roles
         else:
-            return self.fetcher.primary_roles_data()
+            return self.fetcher.current_queue_available_roles()
 
     @lru_cache()
     def get_runes(self, role: Role, active: bool) -> RuneList:

@@ -11,6 +11,7 @@ League of Legends runes, summoner spells, items, and ability order fetcher
 * Supports Summoner's Rift, ARAM, and Nexus Blitz
 * Uses caching for optimal performance
 * Detects whether to use previous patch's data if there is not enough data on this patch to give accurate information
+* Can use data from both U.GG and Mobalytics
 
 ## Setup
 
