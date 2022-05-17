@@ -85,11 +85,23 @@ For example,
 {
     ...
     "small_items": [
-        3340, 
-        1001, 
+        1001,
         2055
     ]
 }
 ```
 
-will include the yellow trinket, boots, and control wards at the end of your small items block in the item set.
+will include boots and control wards at the end of your small items block in the item set.
+
+### backend
+
+`"backend": "ugg" OR "mobalytics"`
+
+Determines the backend to be used to fetch data. `"ugg"` will cause the data to be fetched from [U.GG](https://u.gg/), while `"mobalytics"` will cause data to be fetched from [Mobalytics](https://app.mobalytics.gg/lol).
+
+## Todo
+
+- [X] Mobalytics backend
+- [ ] Use WebSocket LCU API (not polling)
+- [ ] Config `"preferred_item_slots"` and `"small_items"` by name instead of ID
+- [ ] Matchup-specific builds (Mobalytics)

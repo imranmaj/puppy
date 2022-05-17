@@ -45,6 +45,7 @@ def main():
         prev_champion_name = ""
         prev_rune_page_role = None
         current_rune_page_role = None
+        data_source = None
         # main loop
         while True:
             # if we leave champ select, quit
@@ -106,8 +107,6 @@ def main():
                 if assigned_role_rune_page_id:
                     lcu_interface.set_current_rune_page(str(assigned_role_rune_page_id))
                 print("Done", end="\n\n")
-            else:
-                data_source = None
 
             # get role of current rune page
             current_rune_page = lcu_interface.get_current_rune_page()

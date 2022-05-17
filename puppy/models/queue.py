@@ -63,12 +63,19 @@ class QueueList:
             if queue.ugg_queue_name == ugg_queue_name:
                 return queue
 
+    def get_summoners_rift(self) -> Queue:
+        """
+        Returns the Summoner's Rift queue
+        """
+
+        return self.get_queue_by_lcu_queue_name("Summoner's Rift")  # type: ignore
+
     def get_default(self) -> Queue:
         """
         Returns the default queue
         """
 
-        return self.get_queue_by_lcu_queue_name("Summoner's Rift")  # type: ignore
+        return self.get_summoners_rift()
 
     def __iter__(self):
         return iter(self.queues)

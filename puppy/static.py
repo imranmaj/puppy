@@ -111,6 +111,14 @@ ABILITIES = AbilityList(
         Ability(key="R"),
     ]
 )
+# mapping of mobalytics ability numbers to keys
+ABILITY_NUMBERS = {
+    1: ABILITIES.get_ability_by_key("Q"),
+    2: ABILITIES.get_ability_by_key("W"),
+    3: ABILITIES.get_ability_by_key("E"),
+    4: ABILITIES.get_ability_by_key("R"),
+}
+# basic abilities
 BASIC_ABILITIES = AbilityList(
     abilities=[
         ABILITIES.get_ability_by_key("Q"),

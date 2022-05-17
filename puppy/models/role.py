@@ -86,6 +86,16 @@ class RoleList:
             if role.ugg_role_name == ugg_role_name:
                 return role
 
+    def get_role_by_mobalytics_role_name(self, mobalytics_role_name: str) -> Optional[Role]:
+        """
+        Returns a role given its mobalytics role name
+        Returns None if there is no role for the mobalytics role name
+        """
+
+        for role in self:
+            if role.mobalytics_role_name == mobalytics_role_name:
+                return role
+
     def find_role(self, role_string: str) -> Optional[Role]:
         """
         Attempts to find a role based on a string representation of it

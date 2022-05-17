@@ -1,3 +1,4 @@
+from functools import lru_cache
 from typing import Dict, Any, Optional
 from json import JSONDecodeError
 
@@ -6,6 +7,7 @@ import requests
 from puppy.static import UAS, ALL_ROLES
 from puppy.models import RoleList, Role, Queue
 from puppy.apis.data.exceptions import NoDataError
+from puppy.apis.ddragon.champions import Champions
 
 
 REGIONS = {
@@ -49,6 +51,10 @@ class Fetcher:
     UGG_RANKINGS = "https://stats2.u.gg/lol/1.1/rankings/{underscored_patch}/{ugg_queue_name}/{champion_id}/{ugg_rankings_api_version}.json"
 
     def __init__(self, champion_id: str, current_queue: Queue, underscored_patch: str):
+        self.champion_id = champion_id
+        self.current_queue = current_queue
+        self.underscored_patch = underscored_patch
+
         session = requests.Session()
         session.headers.update({"User-Agent": UAS})
 
@@ -94,6 +100,7 @@ class Fetcher:
         except JSONDecodeError:
             raise NoDataError
 
+    @lru_cache()
     def primary_roles_data(self) -> RoleList:
         roles = []
         for ugg_role_number in self.primary_roles:
@@ -104,14 +111,15 @@ class Fetcher:
                 roles.append(role)
         return RoleList(roles=roles)
 
-    def overview_data(
-        self, region: str, rank: str, role: Role
-    ) -> Optional[Dict[str, Any]]:
-        data = self.overview[REGIONS[region]][RANKS[rank]].get(
+    @lru_cache()
+    def overview_data(self, region: str, role: Role) -> Dict[str, Any]:
+        data = self.overview[REGIONS[region]][RANKS[self.current_queue.rank]].get(
             ROLES[str(role.ugg_role_name)]
         )
         if data is None:
-            return
+            raise NoDataError(
+                f"No overview_data for champion={Champions.name_for_id(self.champion_id)}, region={region}, queue={self.current_queue}, rank={self.current_queue.rank}, role={role}"
+            )
         data = data[0]
         item_4_options = list()
         for option in data[5][0]:
@@ -166,14 +174,15 @@ class Fetcher:
             "shards": {"matches": data[8][0], "wins": data[8][1], "shards": data[8][2]},
         }
 
-    def rankings_data(
-        self, region: str, rank: str, role: Role
-    ) -> Optional[Dict[str, Any]]:
-        data = self.rankings[REGIONS[region]][RANKS[rank]].get(
+    @lru_cache()
+    def rankings_data(self, region: str, role: Role) -> Dict[str, Any]:
+        data = self.rankings[REGIONS[region]][RANKS[self.current_queue.rank]].get(
             ROLES[str(role.ugg_role_name)]
         )
         if data is None:
-            return
+            raise NoDataError(
+                f"No overview_data for champion={Champions.name_for_id(self.champion_id)}, region={region}, queue={self.current_queue}, rank={self.current_queue.rank}, role={role}"
+            )
         matchups = list()
         for matchup in data[12]:
             matchups.append(

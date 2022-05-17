@@ -75,6 +75,7 @@ class Runes:
         """
         Sorts list of runes into the correct order
         Runes are ordered by primary and secondary, then by order in their respective tree
+        Shards are disregarded
 
         primary_style - style of primary runes in runes list
         secondary_style - style of secondary runes in runes lists

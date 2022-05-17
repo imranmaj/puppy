@@ -1,4 +1,5 @@
 import abc
+from functools import lru_cache
 from typing import Optional, Tuple
 
 from puppy.models import (
@@ -9,6 +10,7 @@ from puppy.models import (
     RuneList,
     AbilityList,
 )
+from puppy.static import BASIC_ABILITIES
 
 
 class DataSourceAbc(abc.ABC):
@@ -41,8 +43,25 @@ class DataSourceAbc(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def get_first_abilities(self, role: Role) -> AbilityList:
+    def get_abilities(self, role: Role) -> AbilityList:
         pass
+
+    @lru_cache()
+    def get_first_abilities(self, role: Role) -> AbilityList:
+        """
+        Returns AbilityList for first abilities upgrade order of current champion
+
+        role - role of current champion
+        """
+
+        first_abilities = []
+        for ability in self.get_abilities(role):
+            if all([ability in first_abilities for ability in BASIC_ABILITIES]):
+                break  # stop when we've seen every basic ability at least once
+            else:
+                first_abilities.append(ability)
+
+        return AbilityList(abilities=first_abilities)
 
     @abc.abstractmethod
     def get_max_order(self, role: Role) -> AbilityList:

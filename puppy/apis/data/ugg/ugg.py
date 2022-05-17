@@ -22,6 +22,7 @@ from puppy.static import (
     BASIC_ABILITIES,
     MIN_ACCEPTABLE_PATCH_MATCH_RATIO,
     FLASH,
+    QUEUES,
 )
 
 
@@ -68,17 +69,13 @@ class UGG(DataSourceAbc):
 
             current_patch_matches = 0
             previous_patch_matches = 0
-            for role in ALL_ROLES:
-                data = current_patch_data.rankings_data(
-                    "world", self.current_queue.rank, role
-                )
-                if data is not None:
-                    current_patch_matches += data["matches"]
-                data = previous_patch_data.rankings_data(
-                    "world", self.current_queue.rank, role
-                )
-                if data is not None:
-                    previous_patch_matches += data["matches"]
+            for role in set(previous_patch_data.primary_roles_data()) & set(
+                current_patch_data.primary_roles_data()
+            ):
+                data = current_patch_data.rankings_data("world", role)
+                current_patch_matches += data["matches"]
+                data = previous_patch_data.rankings_data("world", role)
+                previous_patch_matches += data["matches"]
 
             # use current patch only if max match count of any role in current patch is at least n% of
             # the max match count in any role on the previous patch
@@ -87,12 +84,12 @@ class UGG(DataSourceAbc):
                 > MIN_ACCEPTABLE_PATCH_MATCH_RATIO
             ):
                 print(
-                    f"Using current patch's data ({current_patch_matches}/{previous_patch_matches})"
+                    f"Using current patch's data ({current_patch_matches}/{previous_patch_matches} = {current_patch_matches / previous_patch_matches:.2f})"
                 )
                 self.fetcher = current_patch_data
             else:
                 print(
-                    f"Reverting to previous patch data ({current_patch_matches}/{previous_patch_matches})"
+                    f"Reverting to previous patch data ({current_patch_matches}/{previous_patch_matches} = {current_patch_matches / previous_patch_matches:.2f})"
                 )
                 self.fetcher = previous_patch_data
         else:
@@ -100,22 +97,14 @@ class UGG(DataSourceAbc):
             self.fetcher = current_patch_data
 
     @lru_cache()
-    def get_overview_data(self, role: Role) -> Dict[str, Any]:
-        overview_data = self.fetcher.overview_data("world", self.current_queue.rank, role)
-        if overview_data is None:
-            raise NoDataError(
-                f"No overview_data for champion={Champions.name_for_id(self.champion_id)}, region=world, queue={self.current_queue}, rank={self.current_queue.rank}, role={role}"
-            )
-        return overview_data
-
-    @lru_cache()
     def get_roles(self) -> RoleList:
         """
         Returns RoleList of commonly played roles + assigned role for current champion
         """
 
-        # only 1 role for map (eg ARAM)
-        if len(self.current_queue.roles) == 1:
+        summoners_rift = QUEUES.get_summoners_rift()
+        assert summoners_rift is not None
+        if self.current_queue != summoners_rift:
             return self.current_queue.roles
 
         if self.assigned_role is not None:
@@ -134,7 +123,7 @@ class UGG(DataSourceAbc):
         active - whether the returned rune page should be active
         """
 
-        overview_data = self.get_overview_data(role)
+        overview_data = self.fetcher.overview_data("world", role)
 
         all_runes = overview_data["runes"]["runes"]
         shards = [int(item) for item in overview_data["shards"]["shards"]]
@@ -171,7 +160,7 @@ class UGG(DataSourceAbc):
         item_set_name - name of item set
         """
 
-        overview_data = self.get_overview_data(role)
+        overview_data = self.fetcher.overview_data("world", role)
 
         starting = ItemBlock(
             items=overview_data["starting_items"]["starting_items"]
@@ -216,7 +205,7 @@ class UGG(DataSourceAbc):
         role - role of current champion
         """
 
-        overview_data = self.get_overview_data(role)
+        overview_data = self.fetcher.overview_data("world", role)
 
         summoners = overview_data["summoner_spells"]["summoner_spells"]
         # flash is on wrong key
@@ -234,7 +223,7 @@ class UGG(DataSourceAbc):
         role - role of current champion
         """
 
-        overview_data = self.get_overview_data(role)
+        overview_data = self.fetcher.overview_data("world", role)
 
         abilities = []
         for key in overview_data["abilities"]["ability_order"]:
@@ -244,23 +233,6 @@ class UGG(DataSourceAbc):
         return AbilityList(abilities=abilities)
 
     @lru_cache()
-    def get_first_abilities(self, role: Role) -> AbilityList:
-        """
-        Returns AbilityList for first abilities upgrade order of current champion
-
-        role - role of current champion
-        """
-
-        first_abilities = []
-        for ability in self.get_abilities(role):
-            if all([ability in first_abilities for ability in BASIC_ABILITIES]):
-                break  # stop when we've seen every basic ability at least once
-            else:
-                first_abilities.append(ability)
-
-        return AbilityList(abilities=first_abilities)
-
-    @lru_cache()
     def get_max_order(self, role: Role) -> AbilityList:
         """
         Returns AbilityList for ability max order of current champion
@@ -268,7 +240,7 @@ class UGG(DataSourceAbc):
         role - role of current champion
         """
 
-        overview_data = self.get_overview_data(role)
+        overview_data = self.fetcher.overview_data("world", role)
 
         abilities = []
         for key in overview_data["abilities"]["ability_max_order"]:
