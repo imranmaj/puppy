@@ -101,7 +101,7 @@ BASIC_ABILITIES = AbilityList(
         ABILITIES.get_ability_by_key("Q"),
         ABILITIES.get_ability_by_key("W"),
         ABILITIES.get_ability_by_key("E"),
-    ]
+    ] # type: ignore
 )
 
 # rune shards

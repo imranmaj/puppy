@@ -2,7 +2,7 @@ from time import sleep
 
 from puppy.environment import print_info
 from puppy.apis import Champions
-from puppy.ugg import UGG
+from puppy.apis.data.ugg import UGG
 from puppy.static import ALL_ROLES, SLEEP_TIME, GAMEFLOW_PHASE
 from puppy.lcu_interface import LcuInterface
 
@@ -64,7 +64,7 @@ def main():
                 # get champ data
                 print("Fetching data...")
                 ugg = UGG(
-                    champion_id=Champions.id_for_name(champion_name),
+                    champion_id=champion_id,
                     current_queue=current_queue,
                     assigned_role=assigned_role,
                 )
@@ -74,12 +74,12 @@ def main():
                 # delete old pages
                 rune_pages = lcu_interface.get_rune_pages()
                 editable_rune_pages = [
-                    page for page in rune_pages if page["isEditable"]
+                    page for page in rune_pages if page["isEditable"]  # type: ignore
                 ]
                 for rune_page in editable_rune_pages:
                     for role in ALL_ROLES:
-                        if role.display_role_name in rune_page["name"]:
-                            lcu_interface.delete_rune_page(str(rune_page["id"]))
+                        if role.display_role_name in rune_page["name"]:  # type: ignore
+                            lcu_interface.delete_rune_page(str(rune_page["id"]))  # type: ignore
                             break
 
                 # build rune pages for correct map and post them
@@ -99,13 +99,15 @@ def main():
                     lcu_interface.post_rune_page(rune_page)
                     # remember id of assigned rune page to set it as active later
                     if rune_page["isActive"]:
-                        assigned_role_rune_page_id = lcu_interface.get_current_rune_page()[
-                            "id"
-                        ]
+                        assigned_role_rune_page_id = (
+                            lcu_interface.get_current_rune_page()["id"]
+                        )
                 # set current rune page to assigned role
                 if assigned_role_rune_page_id:
                     lcu_interface.set_current_rune_page(str(assigned_role_rune_page_id))
                 print("Done", end="\n\n")
+            else:
+                ugg = None
 
             # get role of current rune page
             current_rune_page = lcu_interface.get_current_rune_page()
@@ -117,6 +119,9 @@ def main():
                 )
             # check if champion changed or if we have a different rune page than last time we checked
             if champion_changed or current_rune_page_role != prev_rune_page_role:
+                assert current_rune_page_role is not None
+                assert ugg is not None
+
                 print("Rune page changed to", current_rune_page_role.display_role_name)
                 print("Building item set...")
                 # change items

@@ -84,7 +84,7 @@ class LcuInterface:
                 # can just search through sr roles because only sr has assigned roles
                 return QUEUES.get_queue_by_lcu_queue_name(
                     "Summoner's Rift"
-                ).roles.get_role_by_lcu_role_name(lcu_role_name)
+                ).roles.get_role_by_lcu_role_name(lcu_role_name) # type: ignore
 
     def get_current_rune_page(self) -> Dict[str, Any]:
         """

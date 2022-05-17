@@ -6,7 +6,7 @@ import requests
 
 from puppy.static import UAS, ALL_ROLES
 from puppy.models import RoleList, Role, Queue
-from puppy.exceptions import NoDataError
+from puppy.apis.data.ugg.exceptions import NoDataError
 
 
 REGIONS = {
@@ -96,14 +96,14 @@ class Fetcher:
             raise NoDataError
 
     def primary_roles_data(self) -> RoleList:
-        return RoleList(
-            [
-                ALL_ROLES.get_role_by_ugg_role_name(
-                    REVERSED_ROLES[str(ugg_role_number)]
-                )
-                for ugg_role_number in self.primary_roles
-            ]
-        )
+        roles = []
+        for ugg_role_number in self.primary_roles:
+            role = ALL_ROLES.get_role_by_ugg_role_name(
+                REVERSED_ROLES[str(ugg_role_number)]
+            )
+            if role is not None:
+                roles.append(role)
+        return RoleList(roles=roles)
 
     def overview_data(
         self, region: str, rank: str, role: Role

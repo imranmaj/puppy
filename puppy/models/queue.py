@@ -24,6 +24,9 @@ class Queue:
         self.rank = rank
         self.roles = roles
 
+    def __repr__(self) -> str:
+        return self.lcu_queue_name
+
 
 class QueueList:
     """
@@ -62,7 +65,7 @@ class QueueList:
         Returns the default queue
         """
 
-        return self.get_queue_by_lcu_queue_name("Summoner's Rift")
+        return self.get_queue_by_lcu_queue_name("Summoner's Rift")  # type: ignore
 
     def __iter__(self):
         return iter(self.queues)

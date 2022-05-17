@@ -1,9 +1,2 @@
-from .auth import Auth
-from .lcu import Lcu
-
-from .patches import Patches
-from .champions import Champions
-from .runes import Runes
-from .map import Map
-from .item import Item
-from .summoner import Summoner
+from .client import Auth, Lcu
+from .ddragon import Patches, Champions, Runes, Map, Item, Summoner

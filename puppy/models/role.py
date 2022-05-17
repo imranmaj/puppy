@@ -25,6 +25,9 @@ class Role:
         self.lcu_role_name = lcu_role_name
         self.ugg_role_name = ugg_role_name
 
+    def __repr__(self) -> str:
+        return self.display_role_name
+
 
 class RoleList:
     """
@@ -70,7 +73,7 @@ class RoleList:
             if role.lcu_role_name == lcu_role_name:
                 return role
 
-    def get_role_by_ugg_role_name(self, ugg_role_name: int) -> Optional[Role]:
+    def get_role_by_ugg_role_name(self, ugg_role_name: str) -> Optional[Role]:
         """
         Returns a role given its ugg role name
         Returns None if there is no role for the ugg role name

@@ -23,7 +23,7 @@ class Lcu:
 
         self.session = requests.Session()
         self.session.headers.update({"Accept": "application/json"})
-        self.session.auth = ("riot", auth.key)
+        self.session.auth = ("riot", auth.key) # type: ignore
         self.session.verify = False
         self.BASE_URL = f"https://127.0.0.1:{auth.port}/"
 

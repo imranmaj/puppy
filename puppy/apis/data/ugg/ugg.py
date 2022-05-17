@@ -1,10 +1,11 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict, Any
 from functools import lru_cache
 
-from puppy.exceptions import NoDataError
-from puppy.ugg.fetcher import Fetcher
+from puppy.apis.data.ugg.exceptions import NoDataError
+from puppy.apis.data.ugg.fetcher import Fetcher
+from puppy.apis.data.ugg.exceptions import NoDataError
 from puppy.environment import config
-from puppy.apis import Patches, Runes
+from puppy.apis import Patches, Runes, Champions
 from puppy.models import (
     Queue,
     Role,
@@ -98,6 +99,15 @@ class UGG:
             self.data = current_patch_data
 
     @lru_cache()
+    def get_overview_data(self, role: Role) -> Dict[str, Any]:
+        overview_data = self.data.overview_data("world", self.current_queue.rank, role)
+        if overview_data is None:
+            raise NoDataError(
+                f"No overview_data for champion={Champions.name_for_id(self.champion_id)}, region=world, queue={self.current_queue}, rank={self.current_queue.rank}, role={role}"
+            )
+        return overview_data
+
+    @lru_cache()
     def get_roles(self) -> RoleList:
         """
         Returns RoleList of commonly played roles + assigned role for current champion
@@ -123,21 +133,12 @@ class UGG:
         active - whether the returned rune page should be active
         """
 
-        all_runes = self.data.overview_data("world", self.current_queue.rank, role)[
-            "runes"
-        ]["runes"]
-        shards = [
-            int(item)
-            for item in self.data.overview_data("world", self.current_queue.rank, role)[
-                "shards"
-            ]["shards"]
-        ]
-        primary_style = self.data.overview_data("world", self.current_queue.rank, role)[
-            "runes"
-        ]["primary_style"]
-        secondary_style = self.data.overview_data(
-            "world", self.current_queue.rank, role
-        )["runes"]["secondary_style"]
+        overview_data = self.get_overview_data(role)
+
+        all_runes = overview_data["runes"]["runes"]
+        shards = [int(item) for item in overview_data["shards"]["shards"]]
+        primary_style = overview_data["runes"]["primary_style"]
+        secondary_style = overview_data["runes"]["secondary_style"]
 
         # lists are not hashable (for lru_cache), use tuple
         sorted_runes = Runes.sort_runes(
@@ -169,44 +170,27 @@ class UGG:
         item_set_name - name of item set
         """
 
+        overview_data = self.get_overview_data(role)
+
         starting = ItemBlock(
-            items=self.data.overview_data("world", self.current_queue.rank, role)[
-                "starting_items"
-            ]["starting_items"]
+            items=overview_data["starting_items"]["starting_items"]
             + config.small_items,
             block_name=f"Starting/Small Items, Start: {first_abilities_string}",
         )
         core = ItemBlock(
-            items=self.data.overview_data("world", self.current_queue.rank, role)[
-                "core_items"
-            ]["core_items"],
+            items=overview_data["core_items"]["core_items"],
             block_name=f"Core Items,                    Max: {ability_max_order_string}",
         )
         item_4_options = ItemBlock(
-            items=[
-                item["item"]
-                for item in self.data.overview_data(
-                    "world", self.current_queue.rank, role
-                )["item_4_options"]
-            ],
+            items=[item["item"] for item in overview_data["item_4_options"]],
             block_name="Item 4 Options",
         )
         item_5_options = ItemBlock(
-            items=[
-                item["item"]
-                for item in self.data.overview_data(
-                    "world", self.current_queue.rank, role
-                )["item_5_options"]
-            ],
+            items=[item["item"] for item in overview_data["item_5_options"]],
             block_name="Item 5 Options",
         )
         item_6_options = ItemBlock(
-            items=[
-                item["item"]
-                for item in self.data.overview_data(
-                    "world", self.current_queue.rank, role
-                )["item_6_options"]
-            ],
+            items=[item["item"] for item in overview_data["item_6_options"]],
             block_name="Item 6 Options",
         )
 
@@ -231,9 +215,9 @@ class UGG:
         role - role of current champion
         """
 
-        summoners = self.data.overview_data("world", self.current_queue.rank, role)[
-            "summoner_spells"
-        ]["summoner_spells"]
+        overview_data = self.get_overview_data(role)
+
+        summoners = overview_data["summoner_spells"]["summoner_spells"]
         # flash is on wrong key
         if (config.flash_on_f and summoners[0] == FLASH) or (
             not config.flash_on_f and summoners[1] == FLASH
@@ -249,14 +233,14 @@ class UGG:
         role - role of current champion
         """
 
-        return AbilityList(
-            abilities=[
-                ABILITIES.get_ability_by_key(key)
-                for key in self.data.overview_data(
-                    "world", self.current_queue.rank, role
-                )["abilities"]["ability_order"]
-            ]
-        )
+        overview_data = self.get_overview_data(role)
+
+        abilities = []
+        for key in overview_data["abilities"]["ability_order"]:
+            ability = ABILITIES.get_ability_by_key(key)
+            if ability:
+                abilities.append(ability)
+        return AbilityList(abilities=abilities)
 
     @lru_cache()
     def get_first_abilities(self, role: Role) -> AbilityList:
@@ -283,11 +267,11 @@ class UGG:
         role - role of current champion
         """
 
-        return AbilityList(
-            abilities=[
-                ABILITIES.get_ability_by_key(key)
-                for key in self.data.overview_data(
-                    "world", self.current_queue.rank, role
-                )["abilities"]["ability_max_order"]
-            ]
-        )
+        overview_data = self.get_overview_data(role)
+
+        abilities = []
+        for key in overview_data["abilities"]["ability_max_order"]:
+            ability = ABILITIES.get_ability_by_key(key)
+            if ability:
+                abilities.append(ability)
+        return AbilityList(abilities=abilities)
