@@ -103,6 +103,7 @@ Determines the backend to be used to fetch data. `"ugg"` will cause the data to 
 ## Todo
 
 - [X] Mobalytics backend
-- [ ] Use WebSocket LCU API (not polling)
 - [ ] Config `"preferred_item_slots"` and `"small_items"` by name instead of ID
+- [ ] Use WebSocket LCU API (not polling)
+    - [ ] Persistent background process
 - [ ] Matchup-specific builds (Mobalytics)

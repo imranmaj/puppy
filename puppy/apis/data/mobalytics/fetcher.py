@@ -1,7 +1,6 @@
 from functools import lru_cache
 import hashlib
 from typing import Dict, Any, Optional
-from pathlib import Path
 
 import requests
 
