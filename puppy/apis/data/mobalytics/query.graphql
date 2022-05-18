@@ -1,0 +1,758 @@
+query LolChampionPageQuery($slug: String!, $summonerRegion: Region, $summonerName: String, $role: Rolename, $patch: String, $queue: VirtualQueue, $rank: LolChampionRankFilter, $region: Region, $buildId: Int, $keystoneRune: Int, $secondaryRune: Int, $vsChampionSlug: String, $matchResult: MatchResult, $matchups: [String!], $proSummonerName: String, $proPlayerType: ProPlayerType, $vsChampionRole: Rolename, $counterVsChampionSlug: String, $sortField: LolChampionCountersSortField!, $order: SortOrder!, $withCommon: Boolean!, $withRoleSpecificCommon: Boolean!, $withGuidesData: Boolean!, $withBuildsList: Boolean!, $withBuild: Boolean!, $withRunesBuildsList: Boolean!, $withRunesBuild: Boolean!, $withAramBuildsList: Boolean!, $withAramBuild: Boolean!, $withCountersList: Boolean!, $withCountersStats: Boolean!, $withCounter: Boolean!, $withFilters: Boolean!, $withProBuilds: Boolean!, $withProBuildsMatches: Boolean!) {
+  lol {
+    ...ChampionFiltersFragment @include(if: $withFilters)
+    ...ChampionDynamicCommonDataFragment @include(if: $withCommon)
+    ...ChampionDynamicRoleSpecificCommonDataFragment @include(if: $withRoleSpecificCommon)
+    ...ChampionBuildsListFragment @include(if: $withBuildsList)
+    ...ChampionBuildOnlyFragment @include(if: $withBuild)
+    ...ChampionRunesBuildsListFragment @include(if: $withRunesBuildsList)
+    ...ChampionRunesBuildOnlyFragment @include(if: $withRunesBuild)
+    ...ChampionAramBuildsListFragment @include(if: $withAramBuildsList)
+    ...ChampionAramBuildOnlyFragment @include(if: $withAramBuild)
+    ...ChampionCountersListFragment @include(if: $withCountersList)
+    ...ChampionCountersStatsFragment @include(if: $withCountersStats)
+    ...ChampionCounterFragment @include(if: $withCounter)
+    ...GuidesSummonerChampionStatsFragment @include(if: $withGuidesData)
+    ...ChampionProBuildsFragment @include(if: $withProBuilds)
+    ...ChampionProBuildsMatchesFragment @include(if: $withProBuildsMatches)
+    __typename
+  }
+}
+
+fragment ChampionFiltersFragment on LoL {
+  ...ChampionCommonFiltersFragment
+  ...ChampionARAMFiltersFragment @include(if: $withAramBuildsList)
+  __typename
+}
+
+fragment ChampionCommonFiltersFragment on LoL {
+  filters: champion(
+    filters: {slug: $slug, role: $role, patch: $patch, queue: $queue, rank: $rank, region: $region, gameMode: SUMMONER_RIFT}
+  ) {
+    filtersOptions {
+      ...ChampionFiltersOprionsFragment
+      __typename
+    }
+    activeFilters {
+      ...ChampionActiveFiltersFragment
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionFiltersOprionsFragment on LolChampionFiltersOptions {
+  patches
+  queues
+  ranks
+  regions
+  roles
+  __typename
+}
+
+fragment ChampionActiveFiltersFragment on LolChampionFilters {
+  patch
+  queue
+  rank
+  region
+  role
+  slug
+  __typename
+}
+
+fragment ChampionARAMFiltersFragment on LoL {
+  aramFilters: champion(
+    filters: {slug: $slug, role: $role, patch: $patch, queue: $queue, rank: $rank, region: $region, gameMode: ARAM}
+  ) {
+    filtersOptions {
+      ...ChampionFiltersOprionsFragment
+      __typename
+    }
+    activeFilters {
+      ...ChampionActiveFiltersFragment
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionDynamicCommonDataFragment on LoL {
+  relatedChampions: championsList(filters: {slug: $slug}) {
+    champions {
+      relatedChampionsIds
+      __typename
+    }
+    __typename
+  }
+  championRoles: championsList {
+    champions {
+      ...ChampionsListDynamicChampionFragment
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionsListDynamicChampionFragment on LolChampionsListItem {
+  id
+  roles
+  __typename
+}
+
+fragment ChampionDynamicRoleSpecificCommonDataFragment on LoL {
+  championDynamicStats: champion(
+    filters: {slug: $slug, role: $role, patch: $patch, queue: $queue, rank: $rank, region: $region, gameMode: SUMMONER_RIFT}
+  ) {
+    stats(topHistoryPoints: 2) {
+      ...ChampionBuildsStatsFragment
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionBuildsStatsFragment on LolChampionStats {
+  rankTotal
+  rankValue
+  tier
+  banRateHistory {
+    value
+    x
+    __typename
+  }
+  pickRateHistory {
+    value
+    x
+    __typename
+  }
+  winRateHistory {
+    value
+    x
+    __typename
+  }
+  keepRateHistory {
+    value
+    x
+    __typename
+  }
+  totalMatchCount
+  __typename
+}
+
+fragment ChampionBuildsListFragment on LoL {
+  builds: champion(
+    filters: {slug: $slug, role: $role, patch: $patch, queue: $queue, rank: $rank, region: $region, gameMode: SUMMONER_RIFT}
+  ) {
+    ...ChampionBuildsOptionsFragment
+    synergies {
+      ...ChampionBuildSynergiesListFragment
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionBuildsOptionsFragment on LolChampion {
+  buildsOptions {
+    options {
+      ...ChampionBuildOptionFragment
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionBuildOptionFragment on LolChampionBuild {
+  id
+  championSlug
+  type
+  vsChampionSlug
+  vsRole
+  role
+  stats {
+    wins
+    matchCount
+    __typename
+  }
+  proPlayer {
+    icon
+    label
+    name
+    rank {
+      tier
+      division
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionBuildSynergiesListFragment on LolChampionMatchupSynergyList {
+  type
+  synergies {
+    championSlug
+    role
+    winRate
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionBuildOnlyFragment on LoL {
+  selectedBuild: champion(
+    filters: {slug: $slug, role: $role, patch: $patch, queue: $queue, rank: $rank, region: $region}
+  ) {
+    ...ChampionBuildsBuildFragment
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionBuildsBuildFragment on LolChampion {
+  build: build(filters: {buildId: $buildId}) {
+    ...ChampionBuildFragment
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionBuildFragment on LolChampionBuild {
+  id
+  championSlug
+  items {
+    ...ChampionBuildItemFragment
+    __typename
+  }
+  patch
+  perks {
+    ...ChampionPerkFragment
+    __typename
+  }
+  proPlayer {
+    icon
+    label
+    name
+    rank {
+      tier
+      division
+      __typename
+    }
+    __typename
+  }
+  queue
+  skillOrder
+  skillMaxOrder
+  vsChampionSlug
+  spells
+  stats {
+    matchCount
+    wins
+    __typename
+  }
+  type
+  vsRole
+  role
+  __typename
+}
+
+fragment ChampionBuildItemFragment on LolChampionBuildItemsList {
+  type
+  items
+  timeToTarget
+  __typename
+}
+
+fragment ChampionPerkFragment on LolChampionBuildPerk {
+  IDs
+  style
+  subStyle
+  __typename
+}
+
+fragment ChampionRunesBuildsListFragment on LoL {
+  runesBuilds: champion(
+    filters: {slug: $slug, role: $role, patch: $patch, queue: $queue, rank: $rank, region: $region, gameMode: SUMMONER_RIFT}
+  ) {
+    runes(filters: {keystone: $keystoneRune, secondary: $secondaryRune}) {
+      styleOptions {
+        primary
+        secondary
+        keystone
+        matches
+        pickrate
+        wins
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionRunesBuildOnlyFragment on LoL {
+  selectedRunesBuild: champion(
+    filters: {slug: $slug, role: $role, patch: $patch, queue: $queue, rank: $rank, region: $region, gameMode: SUMMONER_RIFT}
+  ) {
+    runes(filters: {keystone: $keystoneRune, secondary: $secondaryRune}) {
+      selectedStyle {
+        primary
+        secondary
+        keystone
+        matches
+        wins
+        pickrate
+        __typename
+      }
+      runes {
+        slot_num
+        rune
+        wins
+        matches
+        pickrate
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionAramBuildsListFragment on LoL {
+  aramBuilds: champion(
+    filters: {slug: $slug, role: $role, patch: $patch, queue: $queue, rank: $rank, region: $region, gameMode: ARAM}
+  ) {
+    ...ChampionBuildsOptionsFragment
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionAramBuildOnlyFragment on LoL {
+  selectedAramBuild: champion(
+    filters: {slug: $slug, role: $role, patch: $patch, queue: $queue, rank: $rank, region: $region, gameMode: ARAM}
+  ) {
+    ...ChampionBuildsBuildFragment
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionCountersListFragment on LoL {
+  counters: champion(
+    filters: {slug: $slug, role: $role, patch: $patch, queue: $queue, rank: $rank, region: $region}
+  ) {
+    bestPick: countersOptions(top: 15, skip: 0, sort: {field: WR, order: DESC}) {
+      options {
+        ...ChampionCounterOptionFragment
+        __typename
+      }
+      __typename
+    }
+    worstPick: countersOptions(top: 15, skip: 0, sort: {field: WR, order: ASC}) {
+      options {
+        ...ChampionCounterOptionFragment
+        __typename
+      }
+      __typename
+    }
+    overallMetrics: countersOptions {
+      overallAverages {
+        wins
+        losses
+        __typename
+      }
+      __typename
+    }
+    countersMatchups: countersOptions(
+      top: 10
+      skip: 0
+      sort: {field: $sortField, order: $order}
+      filters: {vsChampionRole: $vsChampionRole, vsChampionSlug: $counterVsChampionSlug}
+    ) {
+      filterOptions {
+        ...ChampionCounterMatchupsFilterOptionsFragment
+        __typename
+      }
+      options {
+        ...ChampionCounterMatchupsFragment
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionCounterOptionFragment on LolChampionCounter {
+  matchupSlug
+  matchupRole
+  counterMetrics {
+    ...ChampionCounterMetricsFragment
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionCounterMetricsFragment on LolChampionCounterMetrics {
+  csm
+  dpm
+  dtc
+  dto
+  gd15
+  kda
+  kp
+  looses
+  wins
+  killsInLane
+  dts
+  jungle_csm
+  invadeSoloKills
+  neutralObjectiveControl
+  effectiveRoams
+  itemCompletion
+  __typename
+}
+
+fragment ChampionCounterMatchupsFragment on LolChampionCounter {
+  matchupSlug
+  matchupRole
+  counterMetrics {
+    ...ChampionCounterMatchupMetricsFragment
+    __typename
+  }
+  ownMetrics {
+    ...ChampionCounterMatchupMetricsFragment
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionCounterMatchupMetricsFragment on LolChampionCounterMetrics {
+  wins
+  looses
+  matchupDelta
+  csd15
+  gd15
+  xpd15
+  firstToLevel2
+  jungle_csd15
+  neutralObjectivePercent
+  adc_csd15
+  adc_gd15
+  adc_xpd15
+  itemCompletionDiff
+  __typename
+}
+
+fragment ChampionCounterMatchupsFilterOptionsFragment on LolChampionCounterFilterOptions {
+  matchupsSlugs
+  __typename
+}
+
+fragment ChampionCountersStatsFragment on LoL {
+  summonerVsChampionStats: player(
+    region: $summonerRegion
+    summonerName: $summonerName
+  ) {
+    aId
+    championsMatchups(
+      top: 200
+      skip: 0
+      mode: Worst
+      filter: {championSlug: $slug, rolename: $role, queue: $queue}
+    ) {
+      items {
+        ...SummonerVsChampionStatsFragment
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment SummonerVsChampionStatsFragment on LolPlayerChampionMatchupStatsItem {
+  kda {
+    kills
+    deaths
+    assists
+    __typename
+  }
+  championId
+  csm
+  damageDiffPerMinute
+  goldDiff15
+  kp
+  looses
+  wins
+  role
+  __typename
+}
+
+fragment ChampionCounterFragment on LoL {
+  vsChampionCounter: champion(
+    filters: {slug: $slug, role: $role, patch: $patch, queue: $queue, rank: $rank, region: $region}
+  ) {
+    counter: counter(filters: {vsChampionSlug: $vsChampionSlug}) {
+      ...ChampionVsChampionFragment
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionVsChampionFragment on LolChampionCounter {
+  counterMetrics {
+    ...ChampionCounterMetricsFragment
+    __typename
+  }
+  matchupRole
+  matchupSlug
+  ownMetrics {
+    ...ChampionCounterMetricsFragment
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionProBuildsFragment on LoL {
+  proPlayers(
+    filters: {championSlug: $slug, playerType: $proPlayerType, region: $region, queue: $queue, role: $role, page: {count: 10}}
+  ) {
+    ...ChampionProPlayerFragment
+    ...ChampionProPlayersFiltersFragment
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionProPlayerFragment on LolProPlayersList {
+  players {
+    lolPlayer {
+      name
+      region
+      icon
+      championsStats(mode: Pro, count: 5) {
+        items {
+          wins
+          looses
+          championId
+          __typename
+        }
+        __typename
+      }
+      gpi {
+        items {
+          type
+          value
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    eSportsPlayer {
+      ...ProPlayerInfoFragment
+      __typename
+    }
+    __typename
+  }
+  allPlayersStats {
+    looses
+    wins
+    gpi {
+      items {
+        type
+        value
+        __typename
+      }
+      __typename
+    }
+    proPlayersCount
+    __typename
+  }
+  pageInfo {
+    cursor
+    hasMoreItems
+    __typename
+  }
+  __typename
+}
+
+fragment ProPlayerInfoFragment on ProPlayerInfo {
+  name
+  icon
+  teamName
+  teamIcon
+  type
+  __typename
+}
+
+fragment ChampionProPlayersFiltersFragment on LolProPlayersList {
+  filtersOptions {
+    regions
+    roles
+    playerTypes
+    __typename
+  }
+  activeFilters {
+    playerType
+    queue
+    rank
+    region
+    role
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionProBuildsMatchesFragment on LoL {
+  proPlayersMatches(
+    filters: {championSlug: $slug, region: $region, matchResult: $matchResult, vsChampions: $matchups, queue: $queue, role: $role, playerType: $proPlayerType, summonerName: $proSummonerName, page: {count: 10}}
+  ) {
+    ...ChampionProPlayerMatchesFragment
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionProPlayerMatchesFragment on LolProPlayersMatches {
+  mostPopularBuild {
+    ...ChampionBuildFragment
+    __typename
+  }
+  matches {
+    lolMatch {
+      ...ChampionProPlayerMatchFragment
+      __typename
+    }
+    subjectInfo {
+      ...ProPlayerInfoFragment
+      __typename
+    }
+    __typename
+  }
+  popularMatchups
+  pageInfo {
+    cursor
+    hasMoreItems
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionProPlayerMatchFragment on LolMatch {
+  matchId: id
+  startedAt
+  duration
+  patch
+  laneMatchup {
+    role
+    summonerName
+    region
+    championId
+    __typename
+  }
+  teams {
+    teamId: id
+    result
+    __typename
+  }
+  subject {
+    ...ChampionProPlayerMatchSubjectFragment
+    __typename
+  }
+  __typename
+}
+
+fragment ChampionProPlayerMatchSubjectFragment on LolMatchParticipant {
+  team
+  build {
+    spells
+    perks {
+      IDs
+      style
+      subStyle
+      __typename
+    }
+    __typename
+  }
+  mvpScore
+  role
+  summonerName
+  region
+  summonerIcon
+  championId
+  kda {
+    ...KdaFragment
+    __typename
+  }
+  cs
+  csDiff10
+  finalBuild
+  perks {
+    IDs
+    style
+    subStyle
+    __typename
+  }
+  __typename
+}
+
+fragment KdaFragment on KDA {
+  k: kills
+  d: deaths
+  a: assists
+  __typename
+}
+
+fragment GuidesSummonerChampionStatsFragment on LoL {
+  summonerChampionStats: player(
+    region: $summonerRegion
+    summonerName: $summonerName
+  ) {
+    aId
+    championsStats(
+      mode: MostPlayed
+      count: 200
+      filter: {championSlug: $slug, rolename: $role}
+    ) {
+      items {
+        ...SummonerChampionStatsFragment
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+
+fragment SummonerChampionStatsFragment on LolPlayerChampionStatsItem {
+  kda {
+    kills
+    deaths
+    assists
+    __typename
+  }
+  championId
+  csm
+  damageDiffPerMinute
+  goldDiff15
+  kp
+  looses
+  wins
+  __typename
+}
