@@ -4,7 +4,6 @@ from functools import lru_cache
 from puppy.apis.data.data_source import DataSourceAbc
 from puppy.apis.data.exceptions import NoDataError
 from puppy.apis.data.ugg.fetcher import Fetcher
-from puppy.apis.data.exceptions import NoDataError
 from puppy.environment import config
 from puppy.apis import Patches, Runes
 from puppy.models import (

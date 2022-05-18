@@ -1,4 +1,4 @@
-query LolChampionPageQuery($slug: String!, $summonerRegion: Region, $summonerName: String, $role: Rolename, $patch: String, $queue: VirtualQueue, $rank: LolChampionRankFilter, $region: Region, $buildId: Int, $keystoneRune: Int, $secondaryRune: Int, $vsChampionSlug: String, $matchResult: MatchResult, $matchups: [String!], $proSummonerName: String, $proPlayerType: ProPlayerType, $vsChampionRole: Rolename, $counterVsChampionSlug: String, $sortField: LolChampionCountersSortField!, $order: SortOrder!, $withCommon: Boolean!, $withRoleSpecificCommon: Boolean!, $withGuidesData: Boolean!, $withBuildsList: Boolean!, $withBuild: Boolean!, $withRunesBuildsList: Boolean!, $withRunesBuild: Boolean!, $withAramBuildsList: Boolean!, $withAramBuild: Boolean!, $withCountersList: Boolean!, $withCountersStats: Boolean!, $withCounter: Boolean!, $withFilters: Boolean!, $withProBuilds: Boolean!, $withProBuildsMatches: Boolean!) {
+QUERY = """query LolChampionPageQuery($slug: String!, $summonerRegion: Region, $summonerName: String, $role: Rolename, $patch: String, $queue: VirtualQueue, $rank: LolChampionRankFilter, $region: Region, $buildId: Int, $keystoneRune: Int, $secondaryRune: Int, $vsChampionSlug: String, $matchResult: MatchResult, $matchups: [String!], $proSummonerName: String, $proPlayerType: ProPlayerType, $vsChampionRole: Rolename, $counterVsChampionSlug: String, $sortField: LolChampionCountersSortField!, $order: SortOrder!, $withCommon: Boolean!, $withRoleSpecificCommon: Boolean!, $withGuidesData: Boolean!, $withBuildsList: Boolean!, $withBuild: Boolean!, $withRunesBuildsList: Boolean!, $withRunesBuild: Boolean!, $withAramBuildsList: Boolean!, $withAramBuild: Boolean!, $withCountersList: Boolean!, $withCountersStats: Boolean!, $withCounter: Boolean!, $withFilters: Boolean!, $withProBuilds: Boolean!, $withProBuildsMatches: Boolean!) {
   lol {
     ...ChampionFiltersFragment @include(if: $withFilters)
     ...ChampionDynamicCommonDataFragment @include(if: $withCommon)
@@ -756,3 +756,4 @@ fragment SummonerChampionStatsFragment on LolPlayerChampionStatsItem {
   wins
   __typename
 }
+"""

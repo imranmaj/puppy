@@ -7,7 +7,7 @@ import requests
 from puppy.static import SUMMONERS_RIFT, UAS, ALL_ROLES
 from puppy.models import RoleList, Role, Queue
 from puppy.apis.data.exceptions import NoDataError
-from puppy.apis.ddragon.champions import Champions
+from puppy.apis.ddragon import Champions
 
 
 REGIONS = {
@@ -81,7 +81,11 @@ class Fetcher:
             # champion exists this patch that did not exist last patch
             if self.primary_roles is None:
                 raise NoDataError(
-                    f"No primary roles, champion={Champions.name_for_id(champion_id)}, queue={current_queue}, rank={current_queue.rank}, patch={underscored_patch}, ugg_primary_roles_api_version={ugg_primary_roles_api_version}"
+                    f"No primary roles, champion={Champions.name_for_id(champion_id)}, "
+                    "queue={current_queue}, "
+                    "rank={current_queue.rank}, "
+                    "patch={underscored_patch}, "
+                    "ugg_primary_roles_api_version={ugg_primary_roles_api_version}"
                 )
             self.overview = session.get(
                 self.UGG_OVERVIEW.format(
@@ -101,7 +105,10 @@ class Fetcher:
             ).json()
         except JSONDecodeError:
             raise NoDataError(
-                f"No data, champion={Champions.name_for_id(champion_id)}, queue={current_queue}, rank={current_queue.rank}, patch={underscored_patch}"
+                f"No data, champion={Champions.name_for_id(champion_id)}, "
+                "queue={current_queue}, "
+                "rank={current_queue.rank}, "
+                "patch={underscored_patch}"
             )
 
     @lru_cache()
@@ -125,7 +132,11 @@ class Fetcher:
         )
         if data is None:
             raise NoDataError(
-                f"No overview_data for champion={Champions.name_for_id(self.champion_id)}, region={region}, queue={self.current_queue}, rank={self.current_queue.rank}, role={role}"
+                f"No overview_data for champion={Champions.name_for_id(self.champion_id)}, "
+                "region={region}, "
+                "queue={self.current_queue}, "
+                "rank={self.current_queue.rank}, "
+                "role={role}"
             )
         data = data[0]
         item_4_options = list()
@@ -188,7 +199,11 @@ class Fetcher:
         )
         if data is None:
             raise NoDataError(
-                f"No overview_data for champion={Champions.name_for_id(self.champion_id)}, region={region}, queue={self.current_queue}, rank={self.current_queue.rank}, role={role}"
+                f"No overview_data for champion={Champions.name_for_id(self.champion_id)}, "
+                "region={region}, "
+                "queue={self.current_queue}, "
+                "rank={self.current_queue.rank}, "
+                "role={role}"
             )
         matchups = list()
         for matchup in data[12]:

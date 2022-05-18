@@ -1,13 +1,15 @@
 from functools import lru_cache
+import hashlib
 from typing import Dict, Any, Optional
-from puppy.apis.data.exceptions import NoDataError
+from pathlib import Path
 
 import requests
 
 from puppy.static import ALL_ROLES, UAS, QUEUES, SUMMONERS_RIFT, ARAM
 from puppy.models import RoleList, Role, Queue
-from puppy.apis.ddragon.patches import Patches
-from puppy.apis.ddragon.champions import Champions
+from puppy.apis.data.exceptions import NoDataError
+from puppy.apis.ddragon import Patches, Champions
+from .query import QUERY
 
 RANKS = {
     "pro": "Pro",
@@ -43,12 +45,18 @@ REGIONS = {
 
 
 class Fetcher:
+    GRAPHQL_ENDPOINT = "https://app.mobalytics.gg/api/lol/graphql/v1/query"
+
     def __init__(self, champion_id: str, current_queue: Queue, patch: str):
         self.champion_id = champion_id
         self.current_queue = current_queue
         if self.current_queue not in (SUMMONERS_RIFT, ARAM):
             self.current_queue = QUEUES.get_default()
         self.patch = patch
+
+        hasher = hashlib.sha256()
+        hasher.update(QUERY.encode())
+        self.hash = hasher.hexdigest()
 
         self.session = requests.Session()
         self.session.headers.update({"User-Agent": UAS})
@@ -79,7 +87,10 @@ class Fetcher:
                             roles.append(role)
                     return RoleList(roles)
             raise NoDataError(
-                f"No roles data for champion={Champions.name_for_id(self.champion_id)}, queue={self.current_queue}, rank={self.current_queue.rank}, patch={self.patch}"
+                f"No roles data for champion={Champions.name_for_id(self.champion_id)}, "
+                "queue={self.current_queue}, "
+                "rank={self.current_queue.rank}, "
+                "patch={self.patch}"
             )
 
     @lru_cache()
@@ -103,7 +114,10 @@ class Fetcher:
                 break
         else:
             raise NoDataError(
-                f"No data for champion={Champions.name_for_id(self.champion_id)}, queue={self.current_queue}, rank={self.current_queue.rank}, patch={self.patch}"
+                f"No build for champion={Champions.name_for_id(self.champion_id)}, "
+                "queue={self.current_queue}, "
+                "rank={self.current_queue.rank}, "
+                "patch={self.patch}"
             )
 
         data = self.get_data(
@@ -177,51 +191,81 @@ class Fetcher:
         alternate_name = Champions.alternate_name_for_id(champion_id)
         if alternate_name is None:
             raise ValueError(f"Unknown champion id {champion_id}")
+        vars = {
+            "slug": alternate_name.lower(),  # type: ignore
+            "summonerName": None,
+            "summonerRegion": None,
+            "buildId": build_id,
+            "vsChampionRole": None,
+            "matchups": None,
+            "role": None if role is None else role.mobalytics_role_name,
+            "queue": None if queue is None else queue.mobalytics_queue_name,
+            "region": None if region is None else REGIONS[region],
+            "proPlayerType": None,
+            "rank": None if rank is None else RANKS[rank],
+            "matchResult": None,
+            "withCommon": True,  # needed for roles
+            "withRoleSpecificCommon": False,
+            "withGuidesData": False,
+            "withBuildsList": True,
+            "withRunesBuildsList": False,
+            "withAramBuildsList": True,
+            "withCountersList": False,
+            "withCountersStats": False,
+            "withFilters": True,
+            "withBuild": True,
+            "withRunesBuild": False,
+            "withAramBuild": True,
+            "withCounter": False,
+            "withProBuilds": False,
+            "withProBuildsMatches": False,
+            "sortField": "WR",
+            "order": "DESC",
+            "patch": Patches.major_minor(patch),
+        }
+        data = self._query(vars)
+        return data["data"]["lol"]
+
+    def _query(self, vars: Dict[str, Any]) -> Dict[str, Any]:
         r = self.session.post(
-            "https://app.mobalytics.gg/api/lol/graphql/v1/query",
+            self.GRAPHQL_ENDPOINT,
             json={
                 "operationName": "LolChampionPageQuery",
-                "variables": {
-                    "slug": alternate_name.lower(),  # type: ignore
-                    "summonerName": None,
-                    "summonerRegion": None,
-                    "buildId": build_id,
-                    "vsChampionRole": None,
-                    "matchups": None,
-                    "role": None if role is None else role.mobalytics_role_name,
-                    "queue": None if queue is None else queue.mobalytics_queue_name,
-                    "region": None if region is None else REGIONS[region],
-                    "proPlayerType": None,
-                    "rank": None if rank is None else RANKS[rank],
-                    "matchResult": None,
-                    "withCommon": True,  # needed for roles
-                    "withRoleSpecificCommon": False,
-                    "withGuidesData": False,
-                    "withBuildsList": True,
-                    "withRunesBuildsList": False,
-                    "withAramBuildsList": True,
-                    "withCountersList": False,
-                    "withCountersStats": False,
-                    "withFilters": True,
-                    "withBuild": True,
-                    "withRunesBuild": False,
-                    "withAramBuild": True,
-                    "withCounter": False,
-                    "withProBuilds": False,
-                    "withProBuildsMatches": False,
-                    "sortField": "WR",
-                    "order": "DESC",
-                    "patch": Patches.major_minor(patch),
-                },
+                "variables": vars,
                 "extensions": {
                     "persistedQuery": {
                         "version": 1,
-                        "sha256Hash": "b8bb420a9484863bceda642c365d9bbae62f6531654572620e86a7ca1532202c",
+                        "sha256Hash": self.hash,
                     }
                 },
             },
         )
         data = r.json()
-        if "errors" in data or "selectedBuild" not in data["data"]["lol"]:
-            raise NoDataError
-        return data["data"]["lol"]
+        if "errors" in data:
+            # https://www.apollographql.com/docs/apollo-server/v3/performance/apq/
+            r = self.session.post(
+                self.GRAPHQL_ENDPOINT,
+                json={
+                    "query": QUERY,
+                    "operationName": "LolChampionPageQuery",
+                    "variables": vars,
+                    "extensions": {
+                        "persistedQuery": {
+                            "version": 1,
+                            "sha256Hash": self.hash,
+                        }
+                    },
+                },
+            )
+            data = r.json()
+            if "errors" in data or "selectedBuild" not in data["data"]["lol"]:
+                raise NoDataError(
+                    f"No data for "
+                    "champion={Champions.name_for_id(self.champion_id)}, "
+                    "queue={self.current_queue}, "
+                    "rank={self.current_queue.rank}, "
+                    "patch={self.patch}, "
+                    "vars={vars}, "
+                    "resp={data}"
+                )
+        return data
