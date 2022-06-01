@@ -87,9 +87,9 @@ class Fetcher:
                     return RoleList(roles)
             raise NoDataError(
                 f"No roles data for champion={Champions.name_for_id(self.champion_id)}, "
-                "queue={self.current_queue}, "
-                "rank={self.current_queue.rank}, "
-                "patch={self.patch}"
+                f"queue={self.current_queue}, "
+                f"rank={self.current_queue.rank}, "
+                f"patch={self.patch}"
             )
 
     @lru_cache()
@@ -114,9 +114,9 @@ class Fetcher:
         else:
             raise NoDataError(
                 f"No build for champion={Champions.name_for_id(self.champion_id)}, "
-                "queue={self.current_queue}, "
-                "rank={self.current_queue.rank}, "
-                "patch={self.patch}"
+                f"queue={self.current_queue}, "
+                f"rank={self.current_queue.rank}, "
+                f"patch={self.patch}"
             )
 
         data = self.get_data(
@@ -257,14 +257,26 @@ class Fetcher:
                 },
             )
             data = r.json()
-            if "errors" in data or "selectedBuild" not in data["data"]["lol"]:
+            if "errors" in data:
                 raise NoDataError(
-                    f"No data for "
-                    "champion={Champions.name_for_id(self.champion_id)}, "
-                    "queue={self.current_queue}, "
-                    "rank={self.current_queue.rank}, "
-                    "patch={self.patch}, "
-                    "vars={vars}, "
-                    "resp={data}"
+                    f"Query failed for "
+                    f"champion={Champions.name_for_id(self.champion_id)}, "
+                    f"queue={self.current_queue}, "
+                    f"rank={self.current_queue.rank}, "
+                    f"patch={self.patch}, "
+                    f"vars={vars}, "
+                    f"resp={data}"
                 )
+        if (
+            "selectedBuild" not in data["data"]["lol"]
+            or data["data"]["lol"]["selectedBuild"]["build"] is None
+        ):
+            raise NoDataError(
+                f"No data for "
+                f"champion={Champions.name_for_id(self.champion_id)}, "
+                f"queue={self.current_queue}, "
+                f"rank={self.current_queue.rank}, "
+                f"patch={self.patch}, "
+                f"vars={vars}"
+            )
         return data

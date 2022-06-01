@@ -62,7 +62,7 @@ class Fetcher:
             session.get(self.UGG_API_VERSIONS).json().get(underscored_patch)
         )
         if ugg_api_versions is None:
-            raise NoDataError(f"No version {underscored_patch}")
+            raise NoDataError(f"No U.GG data for version {underscored_patch}")
         ugg_primary_roles_api_version = ugg_api_versions["primary_roles"]
         ugg_overview_api_version = ugg_api_versions["overview"]
         ugg_rankings_api_version = ugg_api_versions["rankings"]
@@ -82,10 +82,10 @@ class Fetcher:
             if self.primary_roles is None:
                 raise NoDataError(
                     f"No primary roles, champion={Champions.name_for_id(champion_id)}, "
-                    "queue={current_queue}, "
-                    "rank={current_queue.rank}, "
-                    "patch={underscored_patch}, "
-                    "ugg_primary_roles_api_version={ugg_primary_roles_api_version}"
+                    f"queue={current_queue}, "
+                    f"rank={current_queue.rank}, "
+                    f"patch={underscored_patch}, "
+                    f"ugg_primary_roles_api_version={ugg_primary_roles_api_version}"
                 )
             self.overview = session.get(
                 self.UGG_OVERVIEW.format(
@@ -106,9 +106,9 @@ class Fetcher:
         except JSONDecodeError:
             raise NoDataError(
                 f"No data, champion={Champions.name_for_id(champion_id)}, "
-                "queue={current_queue}, "
-                "rank={current_queue.rank}, "
-                "patch={underscored_patch}"
+                f"queue={current_queue}, "
+                f"rank={current_queue.rank}, "
+                f"patch={underscored_patch}"
             )
 
     @lru_cache()
@@ -133,10 +133,10 @@ class Fetcher:
         if data is None:
             raise NoDataError(
                 f"No overview_data for champion={Champions.name_for_id(self.champion_id)}, "
-                "region={region}, "
-                "queue={self.current_queue}, "
-                "rank={self.current_queue.rank}, "
-                "role={role}"
+                f"region={region}, "
+                f"queue={self.current_queue}, "
+                f"rank={self.current_queue.rank}, "
+                f"role={role}"
             )
         data = data[0]
         item_4_options = list()
@@ -199,11 +199,11 @@ class Fetcher:
         )
         if data is None:
             raise NoDataError(
-                f"No overview_data for champion={Champions.name_for_id(self.champion_id)}, "
-                "region={region}, "
-                "queue={self.current_queue}, "
-                "rank={self.current_queue.rank}, "
-                "role={role}"
+                f"No rankings for champion={Champions.name_for_id(self.champion_id)}, "
+                f"region={region}, "
+                f"queue={self.current_queue}, "
+                f"rank={self.current_queue.rank}, "
+                f"role={role}"
             )
         matchups = list()
         for matchup in data[12]:
