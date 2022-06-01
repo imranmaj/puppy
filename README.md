@@ -59,7 +59,7 @@ When enabled, will revert to previous patch's data if it is very early in the cu
 
 `"preferred_item_slots": {str: int}`
 
-Maps item ids to preferred item slots in game (0 to 5). When you buy an item on this list, the game will attempt to place it in your preferred slot specified here.
+Maps item names to preferred item slots in game (0 to 5). When you buy an item on this list, the game will attempt to place it in your preferred slot specified here.
 
 For example,
 
@@ -67,12 +67,63 @@ For example,
 {
     ...
     "preferred_item_slots": {
-        "2055": 0
-    }
+        "Luden's Tempest": 0
+    },
+    ...
 }
 ```
 
-will place control wards into the first item slot (bound to the 1 key by default).
+will place the item Luden's Tempest into the first item slot (bound to the 1 key by default) when bought in game.
+
+Item names are somewhat flexible. The following variations are equivalent:
+
+```
+{
+    ...
+    "preferred_item_slots": {
+        "Luden's Tempest": 0
+    },
+    ...
+}
+```
+
+(same as the first example with whitespace, punctuation, and capitalization included)
+
+```
+{
+    ...
+    "preferred_item_slots": {
+        "Luden'sTempest": 0
+    },
+    ...
+}
+```
+
+(whitespace is ignored)
+
+```
+{
+    ...
+    "preferred_item_slots": {
+        "LudensTempest": 0
+    },
+    ...
+}
+```
+
+(punctuation is ignored)
+
+```
+{
+    ...
+    "preferred_item_slots": {
+        "ludenstempest": 0
+    },
+    ...
+}
+```
+
+(capitalization is ignored)
 
 #### small_items
 
@@ -86,13 +137,64 @@ For example,
 {
     ...
     "small_items": [
-        1001,
-        2055
-    ]
+        "Boots",
+        "Control Ward"
+    ],
+    ...
 }
 ```
 
 will include boots and control wards at the end of your small items block in the item set.
+
+Item names are somewhat flexible. The following variations are equivalent:
+
+```
+{
+    ...
+    "small_items": [
+        "Luden's Tempest"
+    ],
+    ...
+}
+```
+
+(whitespace, punctuation, and capitalization included)
+
+```
+{
+    ...
+    "small_items": [
+        "Luden'sTempest"
+    ],
+    ...
+}
+```
+
+(whitespace is ignored)
+
+```
+{
+    ...
+    "small_items": [
+        "LudensTempest"
+    ],
+    ...
+}
+```
+
+(punctuation is ignored)
+
+```
+{
+    ...
+    "small_items": [
+        "ludenstempest"
+    ],
+    ...
+}
+```
+
+(capitalization is ignored)
 
 #### backend
 
@@ -103,7 +205,7 @@ Determines the backend to be used to fetch data. `"ugg"` will cause the data to 
 ## Todo
 
 - [X] Mobalytics backend
-- [ ] Config `"preferred_item_slots"` and `"small_items"` by name instead of ID
+- [X] Config `"preferred_item_slots"` and `"small_items"` by name instead of ID
 - [ ] Use WebSocket LCU API (not polling)
     - [ ] Persistent background process
 - [ ] Matchup-specific builds (Mobalytics)

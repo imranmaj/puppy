@@ -4,8 +4,8 @@ from functools import lru_cache
 from puppy.apis.data.data_source import DataSourceAbc
 from puppy.apis.data.exceptions import NoDataError
 from puppy.apis.data.ugg.fetcher import Fetcher
-from puppy.environment import config
-from puppy.apis import Patches, Runes
+from puppy.config import config
+from puppy.apis import Patches, Runes, Item
 from puppy.models import (
     Queue,
     Role,
@@ -16,12 +16,9 @@ from puppy.models import (
     AbilityList,
 )
 from puppy.static import (
-    ALL_ROLES,
     ABILITIES,
-    BASIC_ABILITIES,
     MIN_ACCEPTABLE_PATCH_MATCH_RATIO,
     FLASH,
-    QUEUES,
     SUMMONERS_RIFT,
 )
 
@@ -162,7 +159,7 @@ class UGG(DataSourceAbc):
 
         starting = ItemBlock(
             items=overview_data["starting_items"]["starting_items"]
-            + config.small_items,
+            + [int(Item.id_for_name(item_name)) for item_name in config.small_items],  # type: ignore
             block_name=f"Starting/Small Items, Start: {first_abilities_string}",
         )
         core = ItemBlock(
@@ -192,7 +189,10 @@ class UGG(DataSourceAbc):
             ],
             item_set_name=item_set_name,
             champion_id=int(self.champion_id),
-            preferred_item_slots=config.preferred_item_slots,
+            preferred_item_slots={
+                Item.id_for_name(item_name): slot
+                for item_name, slot in config.preferred_item_slots.items()
+            },  # type: ignore
         )
 
     @lru_cache()

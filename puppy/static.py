@@ -1,6 +1,8 @@
+from typing import Dict, List
 from itertools import chain
 from enum import Enum
 
+from puppy.apis.ddragon import Item
 from puppy.models import (
     Queue,
     QueueList,
@@ -167,4 +169,77 @@ DEFAULT_CONFIG = {  # default config file contents
     "preferred_item_slots": dict(),
     "small_items": list(),
     "backend": "ugg",
+}
+BACKENDS = ["ugg", "mobalytics"]  # data source
+
+
+def convert_preferred_item_slots(item_slots: Dict[str, int]) -> Dict[str, int]:
+    converted_item_slots = {}
+    for item_id, slot in item_slots.items():
+        converted_item = Item.name_for_id(item_id)
+        if converted_item is not None:
+            converted_item_slots[converted_item] = slot
+    return converted_item_slots
+
+
+def convert_small_items(items: List[int]) -> List[str]:
+    converted_small_items = []
+    for item_id in items:
+        converted_item = Item.name_for_id(str(item_id))
+        if converted_item is not None:
+            converted_small_items.append(converted_item)
+    return converted_small_items
+
+
+def validate_preferred_item_slots(item_slots: Dict[str, int]):
+    for name in item_slots:
+        if Item.id_for_name(name) is None:
+            raise ValueError(
+                f"Invalid item in config field preferred_item_slots: {name}"
+            )
+
+
+def validate_small_items(items: List[int]):
+    for name in items:
+        if Item.id_for_name(name) is None:
+            raise ValueError(f"Invalid item in config field small_items: {name}")
+
+
+def validate_backend(backend: str):
+    if backend not in BACKENDS:
+        raise ValueError(
+            f"Invalid value for config field backend: {backend} "
+            "(must be one of {', '.join(BACKENDS)})"
+        )
+
+
+CONFIG_STRUCTURE = {
+    "flash_on_f": {
+        "type": bool,
+        "default": True,
+    },
+    "revert_patch": {"type": bool, "default": True},
+    "preferred_item_slots": {
+        "type": dict,
+        "default": {},
+        "should_convert": lambda item_slots: item_slots
+        and all(  # backwards compatibility converter
+            item.isdigit() for item in item_slots
+        ),
+        "converter": convert_preferred_item_slots,
+        "validator": validate_preferred_item_slots,
+    },
+    "small_items": {
+        "type": list,
+        "default": [],
+        "should_convert": lambda items: items
+        and all(isinstance(item, int) for item in items),
+        "converter": convert_small_items,
+        "validator": validate_small_items,
+    },
+    "backend": {
+        "type": str,
+        "default": "ugg",
+        "validator": validate_backend,
+    },
 }

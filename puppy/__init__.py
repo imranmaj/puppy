@@ -1,8 +1,8 @@
 from time import sleep
 
-from puppy.environment import print_info
 from puppy.apis import Champions
 from puppy.apis.data import DataSource
+from puppy.config import config
 from puppy.static import ALL_ROLES, SLEEP_TIME, GAMEFLOW_PHASE
 from puppy.lcu_interface import LcuInterface
 
@@ -12,7 +12,15 @@ def main():
     Main
     """
 
-    print_info()
+    print(f"Puppy")
+    print("-------")
+    print("Options:")
+    print(f"Patch reversion {'enabled' if config.revert_patch else 'disabled'}")
+    if config.backend == "ugg":
+        print(f"Backend is U.GG")
+    elif config.backend == "mobalytics":
+        print(f"Backend is Mobalytics")
+    print(f"Flash on {'F' if config.flash_on_f else 'D'}", end="\n\n")
 
     lcu_interface = LcuInterface()
 
@@ -139,7 +147,9 @@ def main():
 
                 # first abilities order
                 first_abilities_string = "".join(
-                    data_source.get_first_abilities(current_rune_page_role).to_str_list()
+                    data_source.get_first_abilities(
+                        current_rune_page_role
+                    ).to_str_list()
                 )
                 # ability max order
                 ability_max_order_string = "".join(
@@ -154,13 +164,15 @@ def main():
                     ability_max_order_string=ability_max_order_string,
                 ).build()
                 # put item set
-                all_item_sets.append(new_item_set)
+                all_item_sets.insert(0, new_item_set)
                 item_sets_data["itemSets"] = all_item_sets
                 lcu_interface.put_item_sets_data(item_sets_data)
 
                 # change summoners
                 print("Editing summoners...")
-                lcu_interface.edit_summoners(data_source.get_summoners(current_rune_page_role))
+                lcu_interface.edit_summoners(
+                    data_source.get_summoners(current_rune_page_role)
+                )
 
                 print("Done", end="\n\n")
 

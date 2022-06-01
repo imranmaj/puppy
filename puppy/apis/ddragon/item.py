@@ -1,9 +1,20 @@
 from functools import lru_cache
 from typing import Optional
+import string
 
 import requests
 
 from .patches import Patches
+
+
+def transform_name(name: str) -> str:
+    """
+    Transforms a string to lowercase and removes punctuation and whitespace
+    """
+
+    return name.casefold().translate(
+        str.maketrans("", "", string.punctuation + string.whitespace)
+    )
 
 
 class Item:
@@ -13,6 +24,12 @@ class Item:
 
     ITEM_URL = f"http://ddragon.leagueoflegends.com/cdn/{Patches.get_current_patch()}/data/en_US/item.json"
     items = requests.get(ITEM_URL).json()
+    id_name = {
+        item_id: item_data["name"] for item_id, item_data in items["data"].items()
+    }
+    name_id = {
+        transform_name(item_name): item_id for item_id, item_name in id_name.items()
+    }
 
     @classmethod
     @lru_cache()
@@ -24,9 +41,7 @@ class Item:
         name - full name of item
         """
 
-        for item_id, item in cls.items["data"].items():
-            if item["name"].casefold() == name.casefold():
-                return item_id
+        return cls.name_id.get(transform_name(name))
 
     @classmethod
     @lru_cache()
@@ -38,5 +53,4 @@ class Item:
         item_id - id of item
         """
 
-        if item_id in cls.items["data"]:
-            return cls.items["data"][item_id]["name"]
+        return cls.id_name.get(item_id)
