@@ -209,7 +209,7 @@ def validate_backend(backend: str):
     if backend not in BACKENDS:
         raise ValueError(
             f"Invalid value for config field backend: {backend} "
-            "(must be one of {', '.join(BACKENDS)})"
+            f"(must be one of {', '.join(BACKENDS)})"
         )
 
 

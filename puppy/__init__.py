@@ -1,10 +1,16 @@
 from time import sleep
+import traceback
 
-from puppy.apis import Champions
-from puppy.apis.data import DataSource
-from puppy.config import config
-from puppy.static import ALL_ROLES, SLEEP_TIME, GAMEFLOW_PHASE
-from puppy.lcu_interface import LcuInterface
+try:
+    from puppy.apis import Champions
+    from puppy.apis.data import DataSource
+    from puppy.config import config
+    from puppy.static import ALL_ROLES, SLEEP_TIME, GAMEFLOW_PHASE
+    from puppy.lcu_interface import LcuInterface
+except Exception:
+    traceback.print_exc()
+    input("\nPress enter to exit...")
+    raise SystemExit
 
 
 def main():

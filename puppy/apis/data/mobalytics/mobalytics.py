@@ -130,7 +130,7 @@ class Mobalytics(DataSourceAbc):
         build = self.fetcher.get_build("world", role)
 
         starting = ItemBlock(
-            items=build["starting_items"] + [int(Item.id_for_name(item_name)) for item_name in config.small_items], # type: ignore
+            items=build["starting_items"] + [int(Item.id_for_name(item_name)) for item_name in config.small_items],  # type: ignore
             block_name=f"Starting/Small Items, Start: {first_abilities_string}",
         )
         early = ItemBlock(
@@ -151,7 +151,7 @@ class Mobalytics(DataSourceAbc):
         )
 
         return ItemSet(
-            item_blocks=[starting, early, core, situational, full_build],
+            item_blocks=[starting, early, core, full_build, situational],
             item_set_name=item_set_name,
             champion_id=int(self.champion_id),
             preferred_item_slots={
