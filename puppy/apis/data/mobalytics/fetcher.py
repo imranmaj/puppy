@@ -267,9 +267,9 @@ class Fetcher:
                     f"vars={vars}, "
                     f"resp={data}"
                 )
-        if (
-            "selectedBuild" not in data["data"]["lol"]
-            or data["data"]["lol"]["selectedBuild"]["build"] is None
+        if "selectedBuild" not in data["data"]["lol"] or (
+            data["data"]["lol"]["selectedBuild"]["build"] is None
+            and data["data"]["lol"]["selectedAramBuild"]["build"] is None
         ):
             raise NoDataError(
                 f"No data for "

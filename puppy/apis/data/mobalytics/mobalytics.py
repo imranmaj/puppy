@@ -1,3 +1,7 @@
+# currently only supports ARAM and Summoner's Rift
+# and makes assumptions that those are the only two possibilities
+# (because Mobalytics only supports those two)
+
 from functools import lru_cache
 from typing import Optional, Tuple
 
@@ -137,10 +141,17 @@ class Mobalytics(DataSourceAbc):
             items=build["early_items"],
             block_name=f"Early Items,                    Max: {ability_max_order_string}",
         )
-        core = ItemBlock(
-            items=build["core_items"],
-            block_name=f"Core Items",
-        )
+        if self.current_queue == SUMMONERS_RIFT:
+            core = ItemBlock(
+                items=build["core_items"],
+                block_name=f"Core Items",
+            )
+        else:
+            # aram (early items are currently null from mobalytics so ability max order won't show)
+            core = ItemBlock(
+                items=build["core_items"],
+                block_name=f"Core Items,                     Max: {ability_max_order_string}",
+            )
         situational = ItemBlock(
             items=build["situational_items"],
             block_name=f"Situational Items",
