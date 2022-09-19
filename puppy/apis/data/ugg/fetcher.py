@@ -6,6 +6,7 @@ import requests
 
 from puppy.static import SUMMONERS_RIFT, UAS, ALL_ROLES
 from puppy.models import RoleList, Role, Queue
+from puppy.apis.data.debug_session import DebugSession
 from puppy.apis.data.exceptions import NoDataError
 from puppy.apis.ddragon import Champions
 
@@ -57,6 +58,7 @@ class Fetcher:
 
         session = requests.Session()
         session.headers.update({"User-Agent": UAS})
+        session = DebugSession(session)
 
         ugg_api_versions = (
             session.get(self.UGG_API_VERSIONS).json().get(underscored_patch)

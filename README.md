@@ -202,6 +202,12 @@ Item names are somewhat flexible. The following variations are equivalent:
 
 Determines the backend to be used to fetch data. `"ugg"` will cause the data to be fetched from [U.GG](https://u.gg/), while `"mobalytics"` will cause data to be fetched from [Mobalytics](https://app.mobalytics.gg/lol).
 
+#### debug
+
+`"debug": bool`
+
+When enabled, debug logs are created.
+
 ## Todo
 
 - [X] Mobalytics backend

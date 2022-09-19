@@ -242,4 +242,5 @@ CONFIG_STRUCTURE = {
         "default": "ugg",
         "validator": validate_backend,
     },
+    "debug": {"type": bool, "default": False},
 }

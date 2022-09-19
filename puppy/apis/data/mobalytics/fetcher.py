@@ -6,6 +6,7 @@ import requests
 
 from puppy.static import ALL_ROLES, UAS, QUEUES, SUMMONERS_RIFT, ARAM
 from puppy.models import RoleList, Role, Queue
+from puppy.apis.data.debug_session import DebugSession
 from puppy.apis.data.exceptions import NoDataError
 from puppy.apis.ddragon import Patches, Champions
 from .query import QUERY
@@ -57,8 +58,9 @@ class Fetcher:
         hasher.update(QUERY.encode())
         self.hash = hasher.hexdigest()
 
-        self.session = requests.Session()
-        self.session.headers.update({"User-Agent": UAS})
+        session = requests.Session()
+        session.headers.update({"User-Agent": UAS})
+        self.session = DebugSession(session)
 
         self.initial_data = self.get_data(
             champion_id=champion_id,

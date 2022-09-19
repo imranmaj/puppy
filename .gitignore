@@ -3,6 +3,7 @@ __pycache__/
 *.json
 test*
 apis.txt
+*.log
 
 # pyinstaller
 build/*
