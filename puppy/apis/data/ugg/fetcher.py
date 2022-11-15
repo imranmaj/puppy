@@ -47,9 +47,9 @@ REVERSED_ROLES = {v: k for k, v in ROLES.items()}
 
 class Fetcher:
     UGG_API_VERSIONS = "https://static.u.gg/assets/lol/riot_patch_update/prod/ugg/ugg-api-versions.json"
-    UGG_PRIMARY_ROLES = "https://stats2.u.gg/lol/1.1/primary_roles/{underscored_patch}/{ugg_primary_roles_api_version}.json"
-    UGG_OVERVIEW = "https://stats2.u.gg/lol/1.1/overview/{underscored_patch}/{ugg_queue_name}/{champion_id}/{ugg_overview_api_version}.json"
-    UGG_RANKINGS = "https://stats2.u.gg/lol/1.1/rankings/{underscored_patch}/{ugg_queue_name}/{champion_id}/{ugg_rankings_api_version}.json"
+    UGG_PRIMARY_ROLES = "https://stats2.u.gg/lol/{ugg_primary_roles_api_version_major_minor}/primary_roles/{underscored_patch}/{ugg_primary_roles_api_version}.json"
+    UGG_OVERVIEW = "https://stats2.u.gg/lol/{ugg_overview_api_version_major_minor}/overview/{underscored_patch}/{ugg_queue_name}/{champion_id}/{ugg_overview_api_version}.json"
+    UGG_RANKINGS = "https://stats2.u.gg/lol/{ugg_rankings_api_version_major_minor}/rankings/{underscored_patch}/{ugg_queue_name}/{champion_id}/{ugg_rankings_api_version}.json"
 
     def __init__(self, champion_id: str, current_queue: Queue, underscored_patch: str):
         self.champion_id = champion_id
@@ -66,13 +66,23 @@ class Fetcher:
         if ugg_api_versions is None:
             raise NoDataError(f"No U.GG data for version {underscored_patch}")
         ugg_primary_roles_api_version = ugg_api_versions["primary_roles"]
+        ugg_primary_roles_api_version_major_minor = self.convert_version_to_major_minor(
+            ugg_primary_roles_api_version
+        )
         ugg_overview_api_version = ugg_api_versions["overview"]
+        ugg_overview_api_version_major_minor = self.convert_version_to_major_minor(
+            ugg_overview_api_version
+        )
         ugg_rankings_api_version = ugg_api_versions["rankings"]
+        ugg_rankings_api_version_major_minor = self.convert_version_to_major_minor(
+            ugg_rankings_api_version
+        )
 
         try:
             self.primary_roles = (
                 session.get(
                     self.UGG_PRIMARY_ROLES.format(
+                        ugg_primary_roles_api_version_major_minor=ugg_primary_roles_api_version_major_minor,
                         underscored_patch=underscored_patch,
                         ugg_primary_roles_api_version=ugg_primary_roles_api_version,
                     )
@@ -91,6 +101,7 @@ class Fetcher:
                 )
             self.overview = session.get(
                 self.UGG_OVERVIEW.format(
+                    ugg_overview_api_version_major_minor=ugg_overview_api_version_major_minor,
                     underscored_patch=underscored_patch,
                     ugg_queue_name=current_queue.ugg_queue_name,
                     champion_id=champion_id,
@@ -99,6 +110,7 @@ class Fetcher:
             ).json()
             self.rankings = session.get(
                 self.UGG_RANKINGS.format(
+                    ugg_rankings_api_version_major_minor=ugg_rankings_api_version_major_minor,
                     underscored_patch=underscored_patch,
                     ugg_queue_name=current_queue.ugg_queue_name,
                     champion_id=champion_id,
@@ -112,6 +124,10 @@ class Fetcher:
                 f"rank={current_queue.rank}, "
                 f"patch={underscored_patch}"
             )
+
+    @staticmethod
+    def convert_version_to_major_minor(version: str) -> str:
+        return ".".join(version.split(".")[:2])
 
     @lru_cache()
     def current_queue_available_roles(self) -> RoleList:
