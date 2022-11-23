@@ -40,6 +40,6 @@ class Auth:
         parsed_commandline_args = {}
         for arg in commandline_args:
             if "=" in arg:
-                key, val = arg.lstrip("-").split("=")
+                key, val = arg.lstrip("-").split("=", maxsplit=1)
                 parsed_commandline_args[key] = val
         return parsed_commandline_args
