@@ -46,7 +46,7 @@ REVERSED_ROLES = {v: k for k, v in ROLES.items()}
 
 
 class Fetcher:
-    UGG_API_VERSIONS = "https://static.u.gg/assets/lol/riot_patch_update/prod/ugg/ugg-api-versions.json"
+    UGG_API_VERSIONS = "https://static.bigbrain.gg/assets/lol/riot_patch_update/prod/ugg/ugg-api-versions.json"
     UGG_PRIMARY_ROLES = "https://stats2.u.gg/lol/{ugg_primary_roles_api_version_major_minor}/primary_roles/{underscored_patch}/{ugg_primary_roles_api_version}.json"
     UGG_OVERVIEW = "https://stats2.u.gg/lol/{ugg_overview_api_version_major_minor}/overview/{underscored_patch}/{ugg_queue_name}/{champion_id}/{ugg_overview_api_version}.json"
     UGG_RANKINGS = "https://stats2.u.gg/lol/{ugg_rankings_api_version_major_minor}/rankings/{underscored_patch}/{ugg_queue_name}/{champion_id}/{ugg_rankings_api_version}.json"
