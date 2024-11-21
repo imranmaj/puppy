@@ -81,6 +81,23 @@ QUEUES = QueueList(
             ),
         ),
         Queue(
+            lcu_queue_name="Bridge of Progress",
+            ugg_queue_name="normal_aram",
+            mobalytics_queue_name="ARAM",
+            rank="overall",
+            roles=RoleList(
+                roles=[
+                    Role(
+                        display_role_name="ARAM",
+                        display_short_role_name="ARAM",
+                        lcu_role_name="",
+                        ugg_role_name="none",
+                        mobalytics_role_name="MID",
+                    )
+                ]
+            ),
+        ),
+        Queue(
             lcu_queue_name="Nexus Blitz",
             ugg_queue_name="nexus_blitz",
             mobalytics_queue_name="",  # TODO: unknown
@@ -143,6 +160,7 @@ BASIC_ABILITIES = AbilityList(
 #         Shard(ugg_shard_name="Scaling Health", shard_id=5001),
 #     ]
 # )
+
 
 # gameflow phases
 class GAMEFLOW_PHASE(Enum):

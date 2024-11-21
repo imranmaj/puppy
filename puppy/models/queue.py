@@ -57,6 +57,7 @@ class QueueList:
         for queue in self:
             if queue.lcu_queue_name == lcu_queue_name:
                 return queue
+        print("Queue not found:", lcu_queue_name)
 
     def get_queue_by_ugg_queue_name(self, ugg_queue_name: str) -> Optional[Queue]:
         """
@@ -67,6 +68,7 @@ class QueueList:
         for queue in self:
             if queue.ugg_queue_name == ugg_queue_name:
                 return queue
+        print("UGG queue not found:", ugg_queue_name)
 
     def get_default(self) -> Queue:
         """
