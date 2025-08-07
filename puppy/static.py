@@ -97,6 +97,24 @@ QUEUES = QueueList(
                 ]
             ),
         ),
+        # New ARAM
+        Queue(
+            lcu_queue_name="Random Map",
+            ugg_queue_name="normal_aram",
+            mobalytics_queue_name="ARAM",
+            rank="overall",
+            roles=RoleList(
+                roles=[
+                    Role(
+                        display_role_name="ARAM",
+                        display_short_role_name="ARAM",
+                        lcu_role_name="",
+                        ugg_role_name="none",
+                        mobalytics_role_name="MID",
+                    )
+                ]
+            ),
+        ),
         Queue(
             lcu_queue_name="Nexus Blitz",
             ugg_queue_name="nexus_blitz",
@@ -118,7 +136,11 @@ QUEUES = QueueList(
 )
 
 SUMMONERS_RIFT: Queue = QUEUES.get_queue_by_lcu_queue_name("Summoner's Rift")  # type: ignore
-ARAM: Queue = QUEUES.get_queue_by_lcu_queue_name("Howling Abyss")  # type: ignore
+ARAM_QUEUES = [
+    QUEUES.get_queue_by_lcu_queue_name("Howling Abyss"),  # type: ignore
+    QUEUES.get_queue_by_lcu_queue_name("Random Map"),  # type: ignore
+    QUEUES.get_queue_by_lcu_queue_name("Bridge of Progress"),  # type: ignore
+]
 
 # list of all roles
 ALL_ROLES = chain.from_iterable([queue.roles.roles for queue in QUEUES])

@@ -4,7 +4,7 @@ from typing import Dict, Any, Optional
 
 import requests
 
-from puppy.static import ALL_ROLES, UAS, QUEUES, SUMMONERS_RIFT, ARAM
+from puppy.static import ALL_ROLES, UAS, QUEUES, SUMMONERS_RIFT, ARAM_QUEUES
 from puppy.models import RoleList, Role, Queue
 from puppy.apis.data.debug_session import DebugSession
 from puppy.apis.data.exceptions import NoDataError
@@ -50,7 +50,7 @@ class Fetcher:
     def __init__(self, champion_id: str, current_queue: Queue, patch: str):
         self.champion_id = champion_id
         self.current_queue = current_queue
-        if self.current_queue not in (SUMMONERS_RIFT, ARAM):
+        if self.current_queue != SUMMONERS_RIFT and self.current_queue not in ARAM_QUEUES:
             self.current_queue = QUEUES.get_default()
         self.patch = patch
 
@@ -74,9 +74,7 @@ class Fetcher:
 
     @lru_cache()
     def current_queue_available_roles(self) -> RoleList:
-        if self.current_queue == ARAM:
-            return ARAM.roles
-        else:  # summoners rift
+        if self.current_queue == SUMMONERS_RIFT:
             for champion_roles in self.initial_data["championRoles"]["champions"]:
                 if int(self.champion_id) == int(champion_roles["id"]):
                     roles = []
@@ -93,6 +91,8 @@ class Fetcher:
                 f"rank={self.current_queue.rank}, "
                 f"patch={self.patch}"
             )
+        else:
+            return self.current_queue.roles
 
     @lru_cache()
     def get_build(self, region: str, role: Role) -> Dict[str, Any]:
@@ -105,7 +105,7 @@ class Fetcher:
             rank=self.current_queue.rank,
             patch=self.patch,
         )
-        if self.current_queue == ARAM:
+        if self.current_queue in ARAM_QUEUES:
             builds_list = data_in_role["aramBuilds"]
         else:
             builds_list = data_in_role["builds"]
@@ -130,7 +130,7 @@ class Fetcher:
             rank=self.current_queue.rank,
             patch=self.patch,
         )
-        if self.current_queue == ARAM:
+        if self.current_queue in ARAM_QUEUES:
             build = data["selectedAramBuild"]["build"]
         else:
             build = data["selectedBuild"]["build"]
